@@ -7,8 +7,8 @@ const app = express();
 const pgp = require('pg-promise')(); // To connect to the Postgres DB from the node server
 const bodyParser = require('body-parser');
 const session = require('express-session'); // To set the session object. To store or access session data, use the `req.session`, which is (generally) serialized as JSON by the store.
-//const bcrypt = require('bcrypt'); //  To hash passwords
-//const axios = require('axios'); // To make HTTP requests from our server. We'll learn more about it in Part B.
+const bcrypt = require('bcrypt'); //  To hash passwords
+const axios = require('axios'); // To make HTTP requests from our server. We'll learn more about it in Part B.
 
 // *****************************************************
 // <!-- Section 2 : Connect to DB -->
@@ -62,7 +62,7 @@ app.get('/welcome', (req, res) => {
     res.json({status: 'success', message: 'Welcome!'});
   });
 
-  app.get('/register', (req,res)=>{
+app.get('/register', (req,res)=>{
     res.render('pages/register')
 });
 app.post('/register', async (req,res)=>{
@@ -81,7 +81,7 @@ app.post('/register', async (req,res)=>{
 
 });
 
-  app.get('/login', (req,res)=>{
+app.get('/login', (req,res)=>{
     res.render('pages/login')
 })
 
