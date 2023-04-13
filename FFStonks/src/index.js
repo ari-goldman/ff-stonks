@@ -62,6 +62,25 @@ app.get('/welcome', (req, res) => {
     res.json({status: 'success', message: 'Welcome!'});
   });
 
+  app.get('/register', (req,res)=>{
+    res.render('pages/register')
+});
+app.post('/register', async (req,res)=>{
+    const hash = await bcrypt.hash(req.body.password, 10);
+    const values = [req.body.username, hash];
+    const query = "INSERT INTO users(username, password) VALUES ($1,$2); ";
+
+    db.any(query, [req.body.username, hash])
+    .then(function(data){
+      res.redirect('/login')
+    })
+    .catch(function(err){
+      console.log(err);
+      res.render('pages/register', {message: "Username already exists"})
+    });
+
+});
+
   app.get('/login', (req,res)=>{
     res.render('pages/login')
 })
