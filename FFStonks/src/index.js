@@ -62,6 +62,32 @@ app.get('/welcome', (req, res) => {
     res.json({status: 'success', message: 'Welcome!'});
   });
 
+  app.get('/login', (req,res)=>{
+    res.render('pages/login')
+})
+app.post('/login', async (req,res)=>{
+// check if password from request matches with password in DB
+const query = 'SELECT password FROM users WHERE username = $1'
+db.one(query,[req.body.username])
+.then(async function(user){
+  if (user){
+    console.log(user.password)
+
+    const match = await bcrypt.compare(req.body.password, user.password);
+    if(match){
+      req.session.user = user;
+      req.session.save();
+      res.redirect('/discover')
+      }
+      else{
+        console.log('Incorrect username or password')
+        res.render('pages/login', {message: "Incorrect Username or Password"})
+       
+      }
+  }
+})
+})
+
 
 
 
