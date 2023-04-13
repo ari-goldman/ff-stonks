@@ -7,7 +7,7 @@ const chai = require('chai');
 const chaiHttp = require('chai-http');
 chai.should();
 chai.use(chaiHttp);
-const {assert, expect} = chai;
+const { assert, expect } = chai;
 
 describe('Server!', () => {
   // Sample test case given to test / endpoint.
@@ -25,4 +25,18 @@ describe('Server!', () => {
 
   // ===========================================================================
   // TO-DO: Part A Login unit test case
+
+  //We are checking POST /add_user API by passing the user info in the correct order. This test case should pass and return a status 200 along with a "Success" message.
+  //Positive cases
+  it('positive : /add_user', done => {
+    chai
+      .request(server)
+      .post('/add_user')
+      .send({ id: 5, name: 'John Doe', dob: '2020-02-20' })
+      .end((err, res) => {
+        expect(res).to.have.status(200);
+        expect(res.body.message).to.equals('Success');
+        done();
+      });
+  });
 });
