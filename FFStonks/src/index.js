@@ -141,6 +141,17 @@ async function getSymbolData(symbols) {
   });
 }
 
+async function getNews(){
+  api_key = process.env.API_KEY;
+  return await axios.get(`https://finnhub.io/api/v1/news?category=general&token=${api_key}`)
+  .then(response => {
+    return response.data;
+  })
+  .catch(error => {
+    return error;
+  })
+}
+
 
 // *****************************************************
 // <!-- Section 5 : Start Server-->
