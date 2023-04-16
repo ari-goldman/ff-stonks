@@ -1,8 +1,11 @@
 :root {
-    --good-color: #5ac54f;
-    --bad-color: #ff0040;
-    background-color: #2a2f4e;
-    color: #ffffff;
+    --good: #caefa6;
+    --bad: #f36684;
+    --light: #fffef9;
+    --dark: #404b4f;
+
+    background-color: var(--light);
+    color: var(--dark);
 }
 
 body {
@@ -11,29 +14,30 @@ body {
 }
 
 .ticker-container {
+    color: var(--light);
     width: 100vw;
     height: 7vh;
     display: grid;
     grid-template-columns: auto auto auto auto auto auto;
-    background-color: #0e071b;
+    background-color: #404b4f;
 }
 
-.ticker-container>.ticker-box {
+.ticker-container > .ticker-box {
     display: grid;
     grid-template-columns: auto auto;
     column-gap: 8px;
-    border-left: rgb(100,100,110) dashed;
-    border-right: rgb(100,100,110) dashed;
+    border-left: var(--light) dashed 1px;
+    border-right: #5e5e80 dashed 1px;
 }
 
-.ticker-container>.ticker-box>.ticker-symbol {
+.ticker-container > .ticker-box > .ticker-symbol {
     display: flex;
     align-items: center;
     justify-content: flex-end;
     font-size: 1.5rem;
 }
 
-.ticker-container>.ticker-box>.ticker-price-container {
+.ticker-container > .ticker-box > .ticker-price-container {
     display: grid;
     grid-template-rows: auto auto
 }

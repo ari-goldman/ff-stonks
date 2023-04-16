@@ -22,11 +22,11 @@
         out += `<div class="ticker-box">`
         out += `<div class="ticker-symbol">${ticker_data.symbols[i]}</div>`
         out += `<div class="ticker-price-container">`;
-        out += `<div style="display: flex; align-items: end;">${data[i].c}</div>`
+        out += `<div style="display: flex; align-items: end;">$${data[i].c}</div>`
         if(data[i].d < 0){
-            out += `<div style="display: flex; align-items: start; color: var(--bad-color)">${data[i].d}</div>`
+            out += `<div style="display: flex; align-items: start; color: var(--bad)">${data[i].d}</div>`
         }else{
-            out += `<div style="display: flex; align-items: start; color: var(--good-color)">${data[i].d}</div>`
+            out += `<div style="display: flex; align-items: start; color: var(--good)">${data[i].d}</div>`
         }
         out += `</div>`
         out += "</div>"
