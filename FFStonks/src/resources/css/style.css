@@ -1,6 +1,39 @@
+:root {
+    --good-color: #5ac54f;
+    --bad-color: #ff0040;
+    background-color: #2a2f4e;
+    color: #ffffff;
+}
+
+body {
+    padding: 0px;
+    margin: 0px;
+}
+
 .ticker-container {
-    transform: translateX(200px);
+    width: 100vw;
+    height: 7vh;
     display: grid;
-    column-gap: 2px;
-    background-color: aquamarine;
+    grid-template-columns: auto auto auto auto auto auto;
+    background-color: #0e071b;
+}
+
+.ticker-container>.ticker-box {
+    display: grid;
+    grid-template-columns: auto auto;
+    column-gap: 8px;
+    border-left: rgb(100,100,110) dashed;
+    border-right: rgb(100,100,110) dashed;
+}
+
+.ticker-container>.ticker-box>.ticker-symbol {
+    display: flex;
+    align-items: center;
+    justify-content: flex-end;
+    font-size: 1.5rem;
+}
+
+.ticker-container>.ticker-box>.ticker-price-container {
+    display: grid;
+    grid-template-rows: auto auto
 }
