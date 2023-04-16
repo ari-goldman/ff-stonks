@@ -9,6 +9,8 @@ const bodyParser = require('body-parser');
 const session = require('express-session'); // To set the session object. To store or access session data, use the `req.session`, which is (generally) serialized as JSON by the store.
 const bcrypt = require('bcrypt'); //  To hash passwords
 const axios = require('axios'); // To make HTTP requests from our server. We'll learn more about it in Part B.
+axios.defaults.baseURL = 'https://finnhub.io/api/v1'; // since we'll be using the same API, just set the default here
+
 
 // *****************************************************
 // <!-- Section 2 : Connect to DB -->
@@ -41,6 +43,9 @@ db.connect()
 
 app.set('view engine', 'ejs'); // set the view engine to EJS
 app.use(bodyParser.json()); // specify the usage of JSON for parsing request body.
+app.use(express.static(__dirname + '/public'));
+console.log(__dirname)
+
 
 // initialize session variables
 app.use(
@@ -59,56 +64,82 @@ app.use(
 
 
 app.get('/welcome', (req, res) => {
-    res.json({status: 'success', message: 'Welcome!'});
-  });
-
-app.get('/register', (req,res)=>{
-    res.render('pages/register')
+  res.json({ status: 'success', message: 'Welcome!' });
 });
-app.post('/register', async (req,res)=>{
-    const hash = await bcrypt.hash(req.body.password, 10);
-    const values = [req.body.username, hash];
-    const query = "INSERT INTO users(username, password) VALUES ($1,$2); ";
 
-    db.any(query, [req.body.username, hash])
-    .then(function(data){
+app.get('/register', (req, res) => {
+  res.render('pages/register')
+});
+app.post('/register', async (req, res) => {
+  const hash = await bcrypt.hash(req.body.password, 10);
+  const values = [req.body.username, hash];
+  const query = "INSERT INTO users(username, password) VALUES ($1,$2); ";
+
+  db.any(query, [req.body.username, hash])
+    .then(function (data) {
       res.redirect('/login')
     })
-    .catch(function(err){
+    .catch(function (err) {
       console.log(err);
-      res.render('pages/register', {message: "Username already exists"})
+      res.render('pages/register', { message: "Username already exists" })
     });
 
 });
 
-app.get('/login', (req,res)=>{
-    res.render('pages/login')
+app.get('/login', (req, res) => {
+  res.render('pages/login')
 })
 
-app.post('/login', async (req,res)=>{
-// check if password from request matches with password in DB
-const query = 'SELECT password FROM users WHERE username = $1'
-db.one(query,[req.body.username])
-.then(async function(user){
-  if (user){
-    console.log(user.password)
+app.post('/login', async (req, res) => {
+  // check if password from request matches with password in DB
+  const query = 'SELECT password FROM users WHERE username = $1'
+  db.one(query, [req.body.username])
+    .then(async function (user) {
+      if (user) {
+        console.log(user.password)
 
-    const match = await bcrypt.compare(req.body.password, user.password);
-    if(match){
-      req.session.user = user;
-      req.session.save();
-      res.redirect('/discover')
+        const match = await bcrypt.compare(req.body.password, user.password);
+        if (match) {
+          req.session.user = user;
+          req.session.save();
+          res.redirect('/discover')
+        }
+        else {
+          console.log('Incorrect username or password')
+          res.render('pages/login', { message: "Incorrect Username or Password" })
+
+        }
       }
-      else{
-        console.log('Incorrect username or password')
-        res.render('pages/login', {message: "Incorrect Username or Password"})
-       
-      }
-  }
-})
+    })
 })
 
+app.get('/home', async (req, res) => {
+  ticker_data = await getTickerData();
+  res.render('pages/home', {ticker_data: ticker_data});
+});
 
+async function getTickerData() {
+  symbols = ['S&P','NDAQ','GOOGL','AAPL','SBUX','TSLA'];
+  return {symbols: symbols, data: await getSymbolData(symbols)};
+  
+}
+
+async function getSymbolData(symbols) {
+  api_key = process.env.API_KEY;
+
+  gets = [];
+  symbols.forEach(async symb => {
+    await gets.push(axios.get(`https://finnhub.io/api/v1/quote?symbol=${symb}&token=${api_key}`));
+  });
+
+  return axios.all(gets)
+  .then(response => {
+    return response;
+  })
+  .catch(error => {
+    return error;
+  });
+}
 
 
 // *****************************************************

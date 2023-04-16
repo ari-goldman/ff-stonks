@@ -1,0 +1,6 @@
+.ticker-container {
+    transform: translateX(200px);
+    display: grid;
+    column-gap: 2px;
+    background-color: aquamarine;
+}
