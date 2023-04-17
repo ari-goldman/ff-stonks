@@ -173,6 +173,28 @@ app.get('/profile',(req,res) =>{
   res.render('pages/profile')
 })
 
+app.post('/addFollower', async(req,res)=>{
+  const query = 'INSERT into user_follows (follower_id, followed_id) values ($1, $2) retrurning * ; ';
+  db.any(query,[ 
+    req.body.follower_id,
+    req.body.followed_id,
+  ])
+  .then(function (data) {
+    res.status(201).json({
+      status: 'success',
+      data: data,
+      message: 'data added successfully',
+    });
+  })
+  // if query execution fails
+  // send error message
+  .catch(function (err) {
+    return console.log(err);
+  });
+
+})
+
+
 
 // *****************************************************
 // <!-- Section 5 : Start Server-->

@@ -1,0 +1,22 @@
+<%- include ('../partials/header') %>
+<%- include ('../partials/menu') %>
+
+    <main>
+
+        <div class="container">
+
+            <form action="/addFollower" method="POST">
+                <label for="followerId">Follower ID:</label>
+        <input type="text" id="follower_id" name="follower_id" required>
+            <br>
+        <label for="userId">User ID:</label>
+        <input type="text" id="user_id" name="user_id" required>
+        <br>
+        <input type="submit" value="Add Follower">
+            </form>
+
+        </div>
+
+    </main>
+
+<%- include ('../partials/footer') %>
