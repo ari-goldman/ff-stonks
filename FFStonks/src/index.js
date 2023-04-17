@@ -152,10 +152,8 @@ app.get('/search',(req,res) =>{
 
 app.get('/searchTick', async (req,res) =>{
   var searchticker = req.query.search;
-  console.log(searchticker);
   api_key = process.env.API_KEY;
   var results = await(axios.get(`https://finnhub.io/api/v1/search?q=${searchticker}&token=${api_key}`));
-  console.log(results.data);
   var data = results.data.result;
   res.render('pages/searchResults', {data});
 })
