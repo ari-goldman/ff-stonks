@@ -1,7 +1,17 @@
-<main>
-    <form action="/searchTick" method="GET">
-        <input type="search" id="search" name="search">
-        <input type="submit" id='search'>
-    </form>
-    
-</main>
+<%- include ('../partials/header') %>
+<%- include ('../partials/menu') %>
+
+    <main>
+
+        <div class="container">
+
+            <form action="/searchTick" method="GET">
+                <input type="search" id="search" name="search">
+                <input type="submit" id='search'>
+            </form>
+
+        </div>
+
+    </main>
+
+<%- include ('../partials/footer') %>

@@ -62,6 +62,10 @@ app.use(
   })
 );
 
+app.get('/', (req, res) => {
+  res.redirect('/login'); 
+});
+
 
 app.get('/welcome', (req, res) => {
   res.json({ status: 'success', message: 'Welcome!' });
@@ -156,11 +160,17 @@ app.get('/searchTick', async (req,res) =>{
   res.render('pages/searchResults', {data});
 })
 
-
-
 app.post('/addFavorite',async(req,res) =>{
   var ticker = req.body.ticker_id;
   console.log(ticker);//ticker grabbed from the button next to the result from the search
+})
+
+app.get('/news',(req,res) =>{
+  res.render('pages/news')
+})
+
+app.get('/profile',(req,res) =>{
+  res.render('pages/profile')
 })
 
 
