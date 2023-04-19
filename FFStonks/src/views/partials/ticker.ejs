@@ -1,5 +1,5 @@
 <!-- <link href="/../../resources/css/style.css" rel="stylesheet"/> -->
-<div class="ticker-container" style="width: 100vw; height: 7vh; display: grid; grid-template-columns: auto auto auto auto auto auto; background-color: rgb(10,10,20); color: rgb(255,255,245);">
+<div class="ticker-container">
     
     <% 
     data = [];
@@ -19,15 +19,14 @@
     
     out = "";
     for(var i = 0; i < data.length; i++){
-        out += `<div style="display: grid; grid-template-columns: auto auto; column-gap: 8px;">`
-        out += `<div style="display: flex; align-items: center; justify-content: flex-end; font-size: 1.5rem;">${ticker_data.symbols[i]}</div>`
-        out += `<div style="display: grid; grid-template-rows: auto auto">`
-        out += `<div style="display: flex; align-items: end;">${data[i].c}</div>`
+        out += `<div class="ticker-box">`
+        out += `<div class="ticker-symbol">${ticker_data.symbols[i]}</div>`
+        out += `<div class="ticker-price-container">`;
+        out += `<div style="display: flex; align-items: end;">$${data[i].c}</div>`
         if(data[i].d < 0){
-            out += `<div style="display: flex; align-items: start; color: #ff0040">${data[i].d}</div>`
+            out += `<div style="display: flex; align-items: start; color: var(--bad)">${data[i].d}</div>`
         }else{
-            out += `<div style="display: flex; align-items: start; color: #5ac54f">${data[i].d}</div>`
-
+            out += `<div style="display: flex; align-items: start; color: var(--good)">${data[i].d}</div>`
         }
         out += `</div>`
         out += "</div>"
