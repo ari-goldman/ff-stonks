@@ -1,6 +1,44 @@
+:root {
+    --good: #caefa6;
+    --bad: #f36684;
+    --light: #fffef9;
+    --dark: #404b4f;
+
+    background-color: var(--light);
+    color: var(--dark);
+    font-family: Chivo, monospace;
+}
+
+body {
+    padding: 0px;
+    margin: 0px;
+}
+
 .ticker-container {
-    transform: translateX(200px);
+    color: var(--light);
+    width: 100vw;
+    height: 7vh;
     display: grid;
-    column-gap: 2px;
-    background-color: aquamarine;
+    grid-template-columns: auto auto auto auto auto auto;
+    background-color: #404b4f;
+}
+
+.ticker-container > .ticker-box {
+    display: grid;
+    grid-template-columns: auto auto;
+    column-gap: 8px;
+    border-left: var(--light) dashed 1px;
+    border-right: #5e5e80 dashed 1px;
+}
+
+.ticker-container > .ticker-box > .ticker-symbol {
+    display: flex;
+    align-items: center;
+    justify-content: flex-end;
+    font-size: 1.5rem;
+}
+
+.ticker-container > .ticker-box > .ticker-price-container {
+    display: grid;
+    grid-template-rows: auto auto
 }
