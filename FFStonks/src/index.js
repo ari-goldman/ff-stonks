@@ -73,6 +73,8 @@ app.get('/welcome', (req, res) => {
 app.get('/register', (req, res) => {
   res.render('pages/register')
 });
+
+// register post route to create account and insert into the table
 app.post('/register', async (req, res) => {
   const hash = await bcrypt.hash(req.body.password, 10);
   const values = [req.body.username, hash];
@@ -93,6 +95,8 @@ app.get('/login', (req, res) => {
   res.render('pages/login')
 })
 
+
+// login page API post route to verify login
 app.post('/login', async (req, res) => {
   // check if password from request matches with password in DB
   const query = 'SELECT password FROM users WHERE username = $1'
@@ -127,6 +131,9 @@ async function getTickerData() {
   
 }
 
+
+// given a list of valid market symbols as strings, 
+// returns the data from each symbol in a list
 async function getSymbolData(symbols) {
   api_key = process.env.API_KEY;
 
@@ -144,6 +151,20 @@ async function getSymbolData(symbols) {
   });
 }
 
+
+
+// Gets the latest market news from finnhub and returns it
+// returned as list of json objecs, each of which are the article
+async function getNews(){
+  api_key = process.env.API_KEY;
+  return await axios.get(`https://finnhub.io/api/v1/news?category=general&token=${api_key}`)
+  .then(response => {
+    return response.data;
+  })
+  .catch(error => {
+    return error;
+  })
+}
 
 app.get('/search',(req,res) =>{
   res.render('pages/search')
@@ -169,6 +190,7 @@ app.get('/news',(req,res) =>{
 app.get('/profile',(req,res) =>{
   res.render('pages/profile')
 })
+
 
 
 // *****************************************************
