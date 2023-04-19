@@ -6,6 +6,7 @@
 
     background-color: var(--light);
     color: var(--dark);
+    font-family: Chivo, monospace;
 }
 
 body {
