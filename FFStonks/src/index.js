@@ -61,6 +61,10 @@ app.use(
   })
 );
 
+app.get('/', (req, res) => {
+  res.redirect('/login'); 
+});
+
 
 app.get('/welcome', (req, res) => {
   res.json({ status: 'success', message: 'Welcome!' });
@@ -139,6 +143,32 @@ async function getSymbolData(symbols) {
     return error;
   });
 }
+
+
+app.get('/search',(req,res) =>{
+  res.render('pages/search')
+})
+
+app.get('/searchTick', async (req,res) =>{
+  var searchticker = req.query.search;
+  api_key = process.env.API_KEY;
+  var results = await(axios.get(`https://finnhub.io/api/v1/search?q=${searchticker}&token=${api_key}`));
+  var data = results.data.result;
+  res.render('pages/searchResults', {data});
+})
+
+app.post('/addFavorite',async(req,res) =>{
+  var ticker = req.body.ticker_id;
+  console.log(ticker);//ticker grabbed from the button next to the result from the search
+})
+
+app.get('/news',(req,res) =>{
+  res.render('pages/news')
+})
+
+app.get('/profile',(req,res) =>{
+  res.render('pages/profile')
+})
 
 
 // *****************************************************
