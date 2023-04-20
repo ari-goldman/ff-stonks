@@ -109,17 +109,17 @@ app.post('/login', async (req, res) => {
         if (match) {
           req.session.user = user;
           req.session.save();
-          res.json({status: 'success'}).redirect('/home')
+          res.redirect('/home')
         }
         else {
           console.log('Incorrect username or password')
-          res.status(404).render('pages/login', {status: 'incorrect password', message: "Incorrect Username or Password"})
+          res.render('pages/login', {status: 'incorrect password', message: "Incorrect Username or Password"})
 
         }
       }
     })
     .catch(err => {
-      res.status(410).render('pages/login', {status: "user does not exist", message: "Incorrect Username or Password"})
+      res.render('pages/login', {status: "user does not exist", message: "Incorrect Username or Password"})
     })
 })
 
@@ -146,6 +146,12 @@ app.get('/home', async (req, res) => {
   ticker_data = await getTickerData();
   res.render('pages/home', {ticker_data: ticker_data});
 });
+
+app.get('/news', async (req, res) => {
+  ticker_data = await getTickerData();
+  news = await getNews();
+  res.render('pages/news', {ticker_data: ticker_data, news: news});
+})
 
 async function getTickerData() {
   symbols = ['S&P','NDAQ','GOOGL','AAPL','SBUX','TSLA'];
@@ -177,9 +183,9 @@ async function getSymbolData(symbols) {
 
 // Gets the latest market news from finnhub and returns it
 // returned as list of json objecs, each of which are the article
-async function getNews(){
+async function getNews(n = 0){
   api_key = process.env.API_KEY;
-  return await axios.get(`https://finnhub.io/api/v1/news?category=general&token=${api_key}`)
+  return await axios.get(`https://finnhub.io/api/v1/news?category=general&minId=${n}&token=${api_key}`)
   .then(response => {
     return response.data;
   })
