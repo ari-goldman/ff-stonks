@@ -1,10 +1,37 @@
 <%- include ('../partials/header') %>
+<%- include ('../partials/ticker') %>
 <%- include ('../partials/menu') %>
 
+
 <main>
-    <div class="container">
-        <h1>The News Page</h1>
-    </div>
+    
+    <% 
+    out = '';
+    if(news){
+        news.forEach(element => {
+            out += `
+            <div class="news-container">
+                <a href="${element.url}" target="_blank"><img src="${element.image}"></a>
+                <div class="news-headline"><p class="news-text">${element.source}: ${element.headline}</p></div>
+                <div class="news-summary"><p class="news-text">${element.summary}</p></div>
+            </div>
+            `;
+        });
+    }else{
+        out += '<p>no news retrieved</p>'
+    }
+         %>
+    <%- out %>
 </main>
 
 <%- include ('../partials/footer') %>
+
+<div class="news-container">
+    <div class="news-headline">${data.source}: ${data.headline} </div>
+    <div class="news-image">
+        <img src="${data.image}">
+    </div>
+    
+    <div class="news-summary">${data.summary}</div>
+
+</div>
