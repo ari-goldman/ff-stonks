@@ -78,15 +78,15 @@ app.get('/register', (req, res) => {
 app.post('/register', async (req, res) => {
   const hash = await bcrypt.hash(req.body.password, 10);
   const values = [req.body.username, hash];
-  const query = "INSERT INTO users(username, password) VALUES ($1,$2); ";
+  const query = "INSERT INTO users (username, password) VALUES ($1,$2); ";
 
   db.any(query, [req.body.username, hash])
     .then(function (data) {
-      res.redirect('/login')
+      res.json({status: "success"}).redirect('/login');
     })
     .catch(function (err) {
       console.log(err);
-      res.render('pages/register', { message: "Username already exists" })
+      res.render('pages/register', { message: "Username already exists" , status: "failed"})
     });
 
 });
@@ -99,7 +99,7 @@ app.get('/login', (req, res) => {
 // login page API post route to verify login
 app.post('/login', async (req, res) => {
   // check if password from request matches with password in DB
-  const query = 'SELECT password FROM users WHERE username = $1'
+  const query = 'SELECT password FROM users WHERE username = $1 LIMIT 1'
   db.one(query, [req.body.username])
     .then(async function (user) {
       if (user) {
@@ -109,16 +109,38 @@ app.post('/login', async (req, res) => {
         if (match) {
           req.session.user = user;
           req.session.save();
-          res.redirect('/discover')
+          res.json({status: 'success'}).redirect('/home')
         }
         else {
           console.log('Incorrect username or password')
-          res.render('pages/login', { message: "Incorrect Username or Password" })
+          res.status(404).render('pages/login', {status: 'incorrect password', message: "Incorrect Username or Password"})
 
         }
       }
     })
+    .catch(err => {
+      res.status(410).render('pages/login', {status: "user does not exist", message: "Incorrect Username or Password"})
+    })
 })
+
+// app.get('/register', (req, res) => {
+//   res.render('pages/register')
+// })
+
+// app.post('/register', async (req, res) => {
+//   //hash the password using bcrypt library
+//   const hash = await bcrypt.hash(req.body.password, 10);
+  
+//   // To-DO: Insert username and hashed password into 'users' table
+//   db.any('insert into users (username, password) values ($1, $2) returning * ;',[req.body.username, hash])
+//   .then(data => {
+//       res.render('pages/login', {message: 'Account created! Please login!'}).status(201);
+//   })
+//   .catch(err => {
+//       res.status(409).render('pages/register', {message: 'Username already taken!', error: 'name taken'})
+
+//   });
+// });
 
 app.get('/home', async (req, res) => {
   ticker_data = await getTickerData();

@@ -22,3 +22,5 @@ CREATE TABLE user_follows(
 follower_id INT NOT NULL,
 followed_id INT NOT NULL
 );
+
+INSERT INTO users (username, password) VALUES ('john27', 'yughjiuo7t6rydfgcvhjui');
