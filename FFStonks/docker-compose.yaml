@@ -21,6 +21,6 @@ services:
       - '3000:3000'
     volumes:
       - ./src:/home/node/app
-    command: 'npm run dev'
+    command: 'npm run testandrun'
 volumes:
   team4-group-project:
