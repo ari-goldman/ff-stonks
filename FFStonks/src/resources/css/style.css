@@ -3,6 +3,7 @@
     --bad: #f36684;
     --light: #fffef9;
     --dark: #404b4f;
+    --hover: #9c4071;
 
     background-color: var(--light);
     color: var(--dark);
@@ -14,6 +15,47 @@ body {
     margin: 0px;
 }
 
+.navbar-container {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 10px;
+    color: var(--dark);
+    height: 2rem;
+    vertical-align: middle;
+}
+
+.navbar-container > .navbar-item {
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+    font-size: 1rem;
+    margin-right: auto;
+}
+
+.navbar-container > .navbar-item.left {
+    display: flex;
+    gap: 1rem;
+}
+
+.navbar-container > .navbar-item.right {
+    display: flex;
+    gap: 1rem;
+    margin-right: 0;
+    margin-left: auto;
+}
+
+.navbar-container > .navbar-item > a {
+    color: var(--dark);
+    text-decoration: none;
+
+}
+
+.navbar-container > .navbar-item > a:hover {
+    color: var(--hover)
+}
+
+
 .ticker-container {
     color: var(--light);
     width: 100vw;
@@ -21,6 +63,7 @@ body {
     display: grid;
     grid-template-columns: auto auto auto auto auto auto;
     background-color: #404b4f;
+    pointer-events: none;
 }
 
 .ticker-container > .ticker-box {
@@ -41,4 +84,62 @@ body {
 .ticker-container > .ticker-box > .ticker-price-container {
     display: grid;
     grid-template-rows: auto auto
+}
+
+.news-container {
+    position: relative;
+    width: 70%;
+    margin: auto;
+    margin-top: 1rem;
+    color: var(--light);
+}
+
+.news-container > a > img {
+    width: 100%;
+    border-radius: 10px;
+    transition: filter ease-out 500ms;
+    filter: blur(5px) brightness(100%);
+}
+
+.news-container > a > img:hover {
+    filter: blur(0px) brightness(60%);
+}
+
+.news-container > .news-source {
+    position: absolute;
+    color: #f8f2e1;
+    left: 1rem;
+    top: 0rem;
+    margin-top: 1rem;
+    font-size: 3rem;
+    pointer-events: none;
+}
+
+.news-container > .news-headline {
+    position: absolute;
+    left: 1rem;
+    top: 4.5rem;
+    pointer-events: none;
+    font-family: Merriweather;
+    font-size: 2rem;
+    line-height: 3rem;
+}
+
+.news-container > .news-summary {
+    position: absolute;
+    left: 1rem;
+    bottom: 0rem;
+    width: calc(100% - 1em);
+    pointer-events: none;
+    font-family: Merriweather;
+    font-size: 1rem;
+    line-height: 2rem;
+}
+
+.news-text {
+    color: var(--light);
+    mix-blend-mode:differen;
+    text-shadow: 0px 0px 6px var(--dark), 0px 0px 3px var(--dark), 0px 0px 2px var(--dark);
+    width: calc(100% - 1rem);
+    margin: 0rem 0rem 1rem 0rem;
 }

@@ -104,6 +104,7 @@ app.get('/login', (req, res) => {
 // login page API post route to verify login
 app.post('/login', async(req,res)=> {
   // check if password from request matches with password in DB
+
   var username = req.body.username;
   const query = `select * from users where username = '${username}'`;
   var password;
@@ -137,29 +138,17 @@ app.post('/login', async(req,res)=> {
   }
 });
 
-// app.get('/register', (req, res) => {
-//   res.render('pages/register')
-// })
-
-// app.post('/register', async (req, res) => {
-//   //hash the password using bcrypt library
-//   const hash = await bcrypt.hash(req.body.password, 10);
-  
-//   // To-DO: Insert username and hashed password into 'users' table
-//   db.any('insert into users (username, password) values ($1, $2) returning * ;',[req.body.username, hash])
-//   .then(data => {
-//       res.render('pages/login', {message: 'Account created! Please login!'}).status(201);
-//   })
-//   .catch(err => {
-//       res.status(409).render('pages/register', {message: 'Username already taken!', error: 'name taken'})
-
-//   });
-// });
 
 app.get('/home', async (req, res) => {
   ticker_data = await getTickerData();
   res.render('pages/home', {ticker_data: ticker_data});
 });
+
+app.get('/news', async (req, res) => {
+  ticker_data = await getTickerData();
+  news = await getNews();
+  res.render('pages/news', {ticker_data: ticker_data, news: news});
+})
 
 async function getTickerData() {
   symbols = ['S&P','NDAQ','GOOGL','AAPL','SBUX','TSLA'];
@@ -191,9 +180,9 @@ async function getSymbolData(symbols) {
 
 // Gets the latest market news from finnhub and returns it
 // returned as list of json objecs, each of which are the article
-async function getNews(){
+async function getNews(n = 0){
   api_key = process.env.API_KEY;
-  return await axios.get(`https://finnhub.io/api/v1/news?category=general&token=${api_key}`)
+  return await axios.get(`https://finnhub.io/api/v1/news?category=general&minId=${n}&token=${api_key}`)
   .then(response => {
     return response.data;
   })
