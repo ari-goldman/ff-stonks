@@ -28,3 +28,21 @@ Plan for the week:
 - Malcolm - Implement api to add a given stock to a users favorites, maybe query and show the option to remove when searching (discuss with team).
 - Daniel - EJS Profile page, API for rendering specific user's favorites. Get the proflile page design approved by the team first
 - Josh - Login and register EJS next week. Maybe add another task - needs substantial contributions before Thursday for points
+
+### Week 3:
+
+Previous week:
+Ari - got the news site to work, did general styling for the website, did some test cases
+Malcolm - Finished add api for favorites
+Cole - EJS for the Profile page
+Daniel - Did not get anything done, got sick...
+Josh - not attended
+Diego - not attended
+
+Plan for the week:
+Ari- Login and Register
+Malcolm - Keep list showing after adding, bootstrap tabs to allow for separate searches https://getbootstrap.com/docs/5.0/components/navs-tabs/#tabs. Logout, authentication.
+Cole - Work with daniel to complete profile page API and EJS. Update user stories on project board so work division is clear. Update project board by end of day Monday
+Daniel - work on API and EJS for profile page
+Josh - not attended
+Diego - not attended
