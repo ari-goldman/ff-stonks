@@ -200,8 +200,14 @@ app.get('/searchTick', async (req,res) =>{
   api_key = process.env.API_KEY;
   var results = await(axios.get(`https://finnhub.io/api/v1/search?q=${searchticker}&token=${api_key}`));
   var data = results.data.result;
-  res.render('pages/searchResults', {data});
-})
+  res.render('pages/search', {
+    data: data});
+});
+
+
+function isEmpty(obj) {
+  return Object.keys(obj).length === 0;
+}
 
 app.post('/addFavorite',async(req,res) =>{
   var ticker = req.body.ticker_id;
@@ -217,18 +223,22 @@ app.post('/addFavorite',async(req,res) =>{
   })
 
   .then(data =>{
-    console.log('DATA: ' + JSON.stringify(data));
 
-    if(data[0] == null){
+    if(isEmpty(data[0])){
       db.any(query)
       .then(data => {
-        console.log("data: ", data);
         console.log("inserted into tickers");
+        res.render("pages/search", {
+          message: `Added ${ticker} to your favorites`
+        });
       })
       .catch((error) =>{
         console.log("error:", error);
+        res.render("pages/search", {
+          message: `Added ${ticker} to your favorites`
+        });
       });
-    }else if (data[1] == null){
+    }else if (isEmpty(data[0])){
       db.any(query2)
       .then(data =>{
         console.log("Inserted into users_to_ticker");
@@ -236,14 +246,15 @@ app.post('/addFavorite',async(req,res) =>{
       .catch(error => {
         console.log("error: ", error);
       })
+    }else{//means it was already found in both the ticker table and users_to_ticker
+      res.render("pages/search", {
+        message: `${ticker} is already in your favorites`
+      });
     }
   })
   .catch(err => {
     console.log("error: " + error);
   })
-
-  console.log(JSON.stringify(query_Res));
-
 })
 
 app.get('/news',(req,res) =>{
