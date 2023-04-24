@@ -75,21 +75,26 @@ app.get('/register', (req, res) => {
 });
 
 // register post route to create account and insert into the table
+// Register
 app.post('/register', async (req, res) => {
+  //hash the password using bcrypt library
   const hash = await bcrypt.hash(req.body.password, 10);
-  const values = [req.body.username, hash];
-  const query = "INSERT INTO users (username, password) VALUES ($1,$2); ";
+  const username = req.body.username;
 
-  db.any(query, [req.body.username, hash])
-    .then(function (data) {
-      res.json({status: "success"}).redirect('/login');
-    })
-    .catch(function (err) {
-      console.log(err);
-      res.render('pages/register', { message: "Username already exists" , status: "failed"})
-    });
+  var query = `INSERT INTO users (username, password) values('${username}','${hash}')`;
 
+  db.any(query)
+
+  .then((data)=>{
+    res.redirect("/login")
+  })
+  .catch((error) => {
+    console.log("error", error);
+    res.redirect("/register");
+  });
+  // To-DO: Insert username and hashed password into 'users' table
 });
+
 
 app.get('/login', (req, res) => {
   res.render('pages/login')
@@ -97,50 +102,42 @@ app.get('/login', (req, res) => {
 
 
 // login page API post route to verify login
-app.post('/login', async (req, res) => {
+app.post('/login', async(req,res)=> {
   // check if password from request matches with password in DB
-  const query = 'SELECT password FROM users WHERE username = $1 LIMIT 1'
-  db.one(query, [req.body.username])
-    .then(async function (user) {
-      if (user) {
-        console.log(user.password)
 
-        const match = await bcrypt.compare(req.body.password, user.password);
-        if (match) {
-          req.session.user = user;
-          req.session.save();
-          res.redirect('/home')
-        }
-        else {
-          console.log('Incorrect username or password')
-          res.render('pages/login', {status: 'incorrect password', message: "Incorrect Username or Password"})
+  var username = req.body.username;
+  const query = `select * from users where username = '${username}'`;
+  var password;
+  var request = await db.any(query);
 
-        }
-      }
-    })
-    .catch(err => {
-      res.render('pages/login', {status: "user does not exist", message: "Incorrect Username or Password"})
-    })
-})
+  var match;
+  if(request.err){
+    console.log("error");
+    
+  }else{
+    var req_not_null = true;
+    if(request[0] == null){
+      req_not_null = false;
+      res.render('pages/register',{
+        message: "Username not found, register below to continue"
+      });
+      match = false;
+    }else{
+      match = await bcrypt.compare(req.body.password, request[0].password);
+      console.log("match", match);
+    }
+    if(match && req_not_null){
+      req.session.user = username;
+      req.session.save();
+      res.redirect('/home');
+    }else if(req_not_null){
+      res.render('pages/login',{
+        message: "Incorrect username or password"
+      });
+    }
+  }
+});
 
-// app.get('/register', (req, res) => {
-//   res.render('pages/register')
-// })
-
-// app.post('/register', async (req, res) => {
-//   //hash the password using bcrypt library
-//   const hash = await bcrypt.hash(req.body.password, 10);
-  
-//   // To-DO: Insert username and hashed password into 'users' table
-//   db.any('insert into users (username, password) values ($1, $2) returning * ;',[req.body.username, hash])
-//   .then(data => {
-//       res.render('pages/login', {message: 'Account created! Please login!'}).status(201);
-//   })
-//   .catch(err => {
-//       res.status(409).render('pages/register', {message: 'Username already taken!', error: 'name taken'})
-
-//   });
-// });
 
 app.get('/home', async (req, res) => {
   ticker_data = await getTickerData();
@@ -208,7 +205,45 @@ app.get('/searchTick', async (req,res) =>{
 
 app.post('/addFavorite',async(req,res) =>{
   var ticker = req.body.ticker_id;
+  var tickQuery = `select * from tickers where ticker = '${ticker}'`;
+  var userQuery = `select * from users_to_ticker where ticker = '${ticker}' AND username = '${req.session.user}'`;
+  var query = `insert into tickers (ticker) values ('${ticker}');`;
+  var query2 = `insert into users_to_ticker (username, ticker) values('${req.session.user}','${ticker}')`;
   console.log(ticker);//ticker grabbed from the button next to the result from the search
+  var query_Res;
+      //task to execute multiple queries
+  db.task('get-everything', task => {
+    return task.batch([task.any(tickQuery), task.any(userQuery)]);
+  })
+
+  .then(data =>{
+    console.log('DATA: ' + JSON.stringify(data));
+
+    if(data[0] == null){
+      db.any(query)
+      .then(data => {
+        console.log("data: ", data);
+        console.log("inserted into tickers");
+      })
+      .catch((error) =>{
+        console.log("error:", error);
+      });
+    }else if (data[1] == null){
+      db.any(query2)
+      .then(data =>{
+        console.log("Inserted into users_to_ticker");
+      })
+      .catch(error => {
+        console.log("error: ", error);
+      })
+    }
+  })
+  .catch(err => {
+    console.log("error: " + error);
+  })
+
+  console.log(JSON.stringify(query_Res));
+
 })
 
 app.get('/news',(req,res) =>{
