@@ -138,6 +138,11 @@ app.post('/login', async(req,res)=> {
   }
 });
 
+app.get("/logout", (req, res) => {
+  req.session.destroy();
+  res.render("pages/logout");
+});
+
 
 app.get('/home', async (req, res) => {
   ticker_data = await getTickerData();
