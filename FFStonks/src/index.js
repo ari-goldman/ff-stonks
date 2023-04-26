@@ -61,6 +61,10 @@ app.use(
   })
 );
 
+function isEmpty(obj) {
+  return Object.keys(obj).length === 0;
+}
+
 app.get('/', (req, res) => {
   res.redirect('/login'); 
 });
@@ -138,6 +142,18 @@ app.post('/login', async(req,res)=> {
   }
 });
 
+  // Authentication Middleware.
+  const auth = (req, res, next) => {
+    if (!req.session.user) {
+      // Default to login page.
+      return res.redirect('/login');
+    }
+    next();
+  };
+  
+  // Authentication Required
+  app.use(auth);
+
 
 app.get('/home', async (req, res) => {
   ticker_data = await getTickerData();
@@ -192,22 +208,63 @@ async function getNews(n = 0){
 }
 
 app.get('/search',(req,res) =>{
-  res.render('pages/search')
+  res.render('pages/search',{
+    data: null,
+    selection: null
+  })
 })
 
 app.get('/searchTick', async (req,res) =>{
-  var searchticker = req.query.search;
-  api_key = process.env.API_KEY;
-  var results = await(axios.get(`https://finnhub.io/api/v1/search?q=${searchticker}&token=${api_key}`));
-  var data = results.data.result;
-  res.render('pages/search', {
-    data: data});
+  var searchvalue = req.query.search;
+  var searchSelect = req.query.searchSelect;
+  console.log("select is " + searchSelect);
+  if(searchSelect == "Stocks"){
+    api_key = process.env.API_KEY;
+    var results = await(axios.get(`https://finnhub.io/api/v1/search?q=${searchvalue}&token=${api_key}`));
+    var data = results.data.result;
+    if(isEmpty(data) || searchvalue == ""){
+      res.render('pages/search', {
+        data: null,
+        selection: null,
+        message: `No stocks found with ticker ${searchvalue}`
+      });
+    }else{
+      res.render('pages/search', {
+        data: data,
+        selection: "Stocks"
+      });
+    }
+  }else if(searchSelect == "Users"){
+    var query = `select username from users where username='${searchvalue}'`
+    var data = await(db.any(query))
+
+    .then(data =>{
+      console.log(JSON.stringify(data));
+      if(isEmpty(data) || searchvalue == ""){
+        res.render('pages/search', {
+          data: null,
+          selection: null,
+          message: `No users found with username ${searchvalue}`
+        });
+      }else{
+        res.render('pages/search', {
+          data: data,
+          selection: 'Users'
+        });
+      }
+      
+    })
+    .catch(err =>{
+      console.log("error: " , err);
+    })
+  }else if(searchSelect == 'None'){
+    res.render('pages/search',{
+      data: null,
+      message: "Please select users or stocks",
+      selection: null
+    })
+  }
 });
-
-
-function isEmpty(obj) {
-  return Object.keys(obj).length === 0;
-}
 
 app.post('/addFavorite',async(req,res) =>{
   var ticker = req.body.ticker_id;
@@ -223,38 +280,43 @@ app.post('/addFavorite',async(req,res) =>{
   })
 
   .then(data =>{
-
     if(isEmpty(data[0])){
       db.any(query)
       .then(data => {
         console.log("inserted into tickers");
-        res.render("pages/search", {
-          message: `Added ${ticker} to your favorites`
-        });
       })
       .catch((error) =>{
         console.log("error:", error);
-        res.render("pages/search", {
-          message: `Added ${ticker} to your favorites`
-        });
       });
-    }else if (isEmpty(data[0])){
+    }
+    if (isEmpty(data[1])){
       db.any(query2)
       .then(data =>{
         console.log("Inserted into users_to_ticker");
+        res.render("pages/search", {
+          message: `Added ${ticker} to your favorites`,
+          data: null,
+          selection: null
+        });
       })
       .catch(error => {
         console.log("error: ", error);
       })
-    }else{//means it was already found in both the ticker table and users_to_ticker
+    }else{//means it was already found in users_to_ticker
       res.render("pages/search", {
-        message: `${ticker} is already in your favorites`
+        message: `${ticker} is already in your favorites`,
+        data: null,
+        selection: null
       });
     }
   })
   .catch(err => {
     console.log("error: " + error);
   })
+})
+
+app.post('/followUser', async (req,res) =>{
+  console.log("trying to follow user: ", req.body.username);
 })
 
 app.get('/news',(req,res) =>{

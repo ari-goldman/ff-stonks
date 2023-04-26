@@ -2,21 +2,28 @@
 <%- include ('../partials/menu') %>
 <%- include ('../partials/message') %>
 
+<head>
+    <link href="/css/searchStyle.css" rel="stylesheet"/>
+</head>
 <main>
     <div class = "container">
         <form action="/searchTick" method="GET">
-            <input type="search" id="search" name="search" placeholder="Search stock ticker...">
+            <input type="search" id="search" name="search" placeholder="Search for...">
+            <select id="searchSelect" name="searchSelect">
+                <option value="None">-</option>
+                <option value="Stocks">Stock Tickers</option>
+                <option value="Users">Users</option>
+            </select>
             <input type="submit" id='search' value="SEARCH">
         </form>
-        
         <table>
-            <tr>
-                <th>Name</th>
-                <th>Ticker</th>
-            </tr>
-            <%if(data){
-                data.forEach(function(tick){
+            <%if(data && selection=='Stocks'){%>
+                <%data.forEach(function(tick){
                     if(tick.type == 'Common Stock'){%>
+                        <tr>
+                            <th>Name</th>
+                            <th>Ticker</th>
+                        </tr>
                         <form action="/addFavorite" method="POST">    
                             <input name="ticker_id" value="<%- tick.symbol%>" type="hidden">                   
                             <tr>
@@ -29,7 +36,24 @@
                         </form>
                     <%}
                 })
-            }%>
+            }else if(data && selection == 'Users'){
+                data.forEach(function(user){%>
+                    <tr>
+                        <th>Username</th>
+                    </tr>
+                    <form action="/followUser" method="POST">    
+                        <input name="username" value="<%- user.username%>" type="hidden">                   
+                        <tr>
+                            <td><%- user.username%></td>
+                            <td>
+                                <input type="submit" value="Follow">
+                            </td>
+                        </tr>
+                    </form>
+                 <%})
+            }else if(data){%>
+                <p>No results found...</p>
+            <%}%>
         </table>
     </div>
     
