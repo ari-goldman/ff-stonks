@@ -24,8 +24,47 @@
                       <div class="d-flex justify-content-start rounded-3 p-2 mb-2"
                         style="background-color: #efefef;">
                         <div class="px-3">
-                          <p class="small text-muted mb-1">Followers</p>
-                          <p class="mb-0">976</p>
+                          <table>
+                            <tr>
+                              <td>
+                                <p class="small text-muted mb-1">Stocks</p>
+                              </td>
+                              <td>
+                                <p class="small text-muted mb-1">Followers</p>
+                              </td>
+                              <td>
+                                <p class="small text-muted mb-1">Following</p>
+                              </td>
+                            </tr>
+                            <tr>
+                              <td>
+                                <table>
+                                  <%tickers.forEach(function(tick){ %>
+                                          <tr>
+                                              <th>Name</th>
+                                              <th>Ticker</th>
+                                          </tr>
+                                          <form action="/removeFavorite" method="POST">    
+                                              <input name="ticker_id" value="<%- tick.symbol%>" type="hidden">                   
+                                              <tr>
+                                                  <td><%- tick.description%></td>
+                                                  <td><%- tick.ticker%></td>
+                                                  <td>
+                                                    <input type="submit" value="Remove from Favorites">
+                                                  </td>
+                                              </tr>
+                                          </form>
+                                      <%})%>
+                                </table>
+                              </td>
+                              <td>
+                                followers
+                              </td>
+                              <td>
+                                following
+                              </td>
+                            </tr>
+                          </table>
                         </div>
                       </div>
                     </div>

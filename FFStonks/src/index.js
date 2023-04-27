@@ -342,13 +342,13 @@ app.get('/profile', (req, res) => {
   })
 
   .then(data =>{
-    console.log(data[0]);
-    console.log(data[1]);
+    //console.log(data[0]);
+    //console.log(data[1][0]);
     if (!data[0]) {
       res.status(404).send('User not found');
       return;
     }
-    res.render('pages/profile', { username: data[0][0].username });
+    res.render('pages/profile', { username: data[0][0].username, tickers: data[1] });
   })
   .catch(error => {
     console.error(error);
