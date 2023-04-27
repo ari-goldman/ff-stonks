@@ -348,7 +348,7 @@ app.get('/profile', (req, res) => {
       res.status(404).send('User not found');
       return;
     }
-    res.render('pages/profile', { username: data[0][0].username, tickers: data[1] });
+    res.render('pages/profile', { username: data[0][0].username, isCurrentUser: isCurrentUser, tickers: data[1] });
   })
   .catch(error => {
     console.error(error);

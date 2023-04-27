@@ -10,7 +10,7 @@
                 <div class="card-body p-4">
                   <div class="d-flex text-black">
                     <div class="flex-shrink-0">
-                      <img src="..\resources\img\default.svg"
+                      <img src="\img\default.svg"
                         alt="Generic placeholder image" class="img-fluid"
                         style="width: 180px; border-radius: 10px;">
                     </div>
@@ -26,32 +26,34 @@
                         <div class="px-3">
                           <table>
                             <tr>
-                              <td>
+                              <th>
                                 <p class="small text-muted mb-1">Stocks</p>
-                              </td>
-                              <td>
+                              </th>
+                              <th>
                                 <p class="small text-muted mb-1">Followers</p>
-                              </td>
-                              <td>
+                              </th>
+                              <th>
                                 <p class="small text-muted mb-1">Following</p>
-                              </td>
+                              </th>
                             </tr>
                             <tr>
                               <td>
                                 <table>
+                                  <tr>
+                                    <th>Name</th>
+                                    <th>Ticker</th>
+                                  </tr>
                                   <%tickers.forEach(function(tick){ %>
-                                          <tr>
-                                              <th>Name</th>
-                                              <th>Ticker</th>
-                                          </tr>
                                           <form action="/removeFavorite" method="POST">    
                                               <input name="ticker_id" value="<%- tick.symbol%>" type="hidden">                   
                                               <tr>
-                                                  <td><%- tick.description%></td>
+                                                  <td><%- tick.name%></td>
                                                   <td><%- tick.ticker%></td>
-                                                  <td>
-                                                    <input type="submit" value="Remove from Favorites">
-                                                  </td>
+                                                  <% if (isCurrentUser){ %>
+                                                    <td>
+                                                      <input type="submit" value="Remove from Favorites">
+                                                    </td>
+                                                  <% } %>
                                               </tr>
                                           </form>
                                       <%})%>
