@@ -37,12 +37,11 @@
                         </form>
                     <%}
                 })
-            }else if(data && selection == 'Users'){
+            }else if(data && selection == 'Users'){ %>
                 <tr>
                     <th>Username</th>
                 </tr>
-                data.forEach(function(user){%>
-                    
+                <% data.forEach(function(user){%>
                     <form action="/followUser" method="POST">    
                         <input name="username" value="<%- user.username%>" type="hidden">                   
                         <tr>
