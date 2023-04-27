@@ -17,6 +17,6 @@ ticker VARCHAR(50) NOT NULL
 
 DROP TABLE IF EXISTS user_follows CASCADE;
 CREATE TABLE user_follows(
-follower_id INT NOT NULL,
-followed_id INT NOT NULL
+followed_username VARCHAR(50) NOT NULL,
+follower_username VARCHAR(50) NOT NULL
 );
