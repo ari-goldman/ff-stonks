@@ -323,9 +323,23 @@ app.get('/news',(req,res) =>{
   res.render('pages/news')
 })
 
-app.get('/profile',(req,res) =>{
-  res.render('pages/profile')
-})
+app.get('/profile', (req, res) => {
+  const username = req.session.user;
+  console.log(req.session.user);
+  db.query('SELECT * FROM users WHERE username = $1 LIMIT 1', [username])
+    .then((user) => {
+      if (!user) {
+        res.status(404).send('User not found');
+        return;
+      }
+      console.log(user);
+      res.render('pages/profile', { username: username });
+    })
+    .catch((error) => {
+      console.error(error);
+      res.status(500).send('Error retrieving data');
+    });
+});
 
 
 
