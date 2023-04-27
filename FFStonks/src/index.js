@@ -323,19 +323,53 @@ app.get('/news',(req,res) =>{
 })
 
 app.get('/profile', (req, res) => {
-  const username = req.session.user;
-  db.query('SELECT * FROM users WHERE username = $1 LIMIT 1', [username])
-    .then((user) => {
-      if (!user) {
-        res.status(404).send('User not found');
-        return;
-      }
-      res.render('pages/profile', { username: username });
-    })
-    .catch((error) => {
-      console.error(error);
-      res.status(500).send('Error retrieving data');
-    });
+  var username = req.query.user;
+  var isCurrentUser =  username == req.session.user ? true : false;
+
+  if (req.query.user == null) {
+    username = req.session.user;
+    isCurrentUser = true;
+  }
+
+  const userQuery = `SELECT * FROM users WHERE username = '${username}' LIMIT 1`;
+  const tickerQuery = `SELECT * FROM users_to_ticker where username = '${username}'`;
+  const followedQuery = 'SELECT * FROM user_follows where followed_username = $1';
+  const followerQuery = 'SELECT * FROM user_follows where follower_username = $1';
+
+
+  db.task('get-everything', task => {
+    return task.batch([task.any(userQuery), task.any(tickerQuery)]);
+  })
+
+  .then(data =>{
+    console.log(data[0]);
+    console.log(data[1]);
+    if (!data[0]) {
+      res.status(404).send('User not found');
+      return;
+    }
+    res.render('pages/profile', { username: data[0][0].username });
+  })
+  .catch(error => {
+    console.error(error);
+    res.status(500).send('Error retrieving data');
+  })
+
+  // db.query('SELECT * FROM users WHERE username = $1 LIMIT 1', [username])
+  //   .then((user) => {
+  //     if (!user) {
+  //       res.status(404).send('User not found');
+  //       return;
+  //     }
+  //     console.log(user);
+  //     res.render('pages/profile', { username: username });
+  //   })
+  //   .catch((error) => {
+  //     console.error(error);
+  //     res.status(500).send('Error retrieving data');
+  //   });
+
+
 });
 
 app.get("/logout", (req, res) => {
