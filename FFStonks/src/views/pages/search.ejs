@@ -26,7 +26,6 @@
                 </tr>
                 <%data.forEach(function(tick){
                     if(tick.type == 'Common Stock'){%>
-                        
                         <form action="/addFavorite" method="POST">    
                             <input name="ticker_id" value="<%- tick.symbol%>" type="hidden">                   
                             <tr>
@@ -39,11 +38,11 @@
                         </form>
                     <%}
                 })
-            }else if(data && selection == 'Users'){
-                data.forEach(function(user){%>
-                    <tr>
-                        <th>Username</th>
-                    </tr>
+            }else if(data && selection == 'Users'){ %>
+                <tr>
+                    <th>Username</th>
+                </tr>
+                <% data.forEach(function(user){%>
                     <form action="/followUser" method="POST">    
                         <input name="username" value="<%- user.username%>" type="hidden">                   
                         <tr>

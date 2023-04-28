@@ -1,8 +1,11 @@
 <%- include ('../partials/header') %>
+<%- include ('../partials/ticker') %>
 <%- include ('../partials/menu') %>
 
-<main>
-    <section class="vh-100" style="background-color: #9de2ff;">
+
+    <main>
+      <container>
+      <section class="vh-100" style="background-color: #9de2ff; float: left;">
         <div class="container py-5 h-100">
           <div class="row d-flex justify-content-center align-items-center h-100">
             <div class="col col-md-9 col-lg-7 col-xl-5">
@@ -10,22 +13,56 @@
                 <div class="card-body p-4">
                   <div class="d-flex text-black">
                     <div class="flex-shrink-0">
-                      <img src="https://w3assets.angelone.in/wp-content/uploads/2018/09/1.1_0.png"
-                        alt="Generic placeholder image" class="img-fluid"
+                      <img src="\img\default.svg" alt="Generic placeholder image" class="img-fluid"
                         style="width: 180px; border-radius: 10px;">
                     </div>
-                    
-                    <div class="flex-grow-1 ms-3">
-                        <h5 class="mb-1">Username: <%= username %> <span id="username"></span></h5>
 
-                        <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
-                        <script>
-                        </script>
-                      <div class="d-flex justify-content-start rounded-3 p-2 mb-2"
-                        style="background-color: #efefef;">
+                    <div class="flex-grow-1 ms-3">
+                      <h5 class="mb-1">User: <%= username %> <span id="username"></span></h5>
+
+                      <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+                      <script>
+                      </script>
+                      <div class="d-flex justify-content-start rounded-3 p-2 mb-2" style="background-color: #efefef;">
                         <div class="px-3">
-                          <p class="small text-muted mb-1">Followers</p>
-                          <p class="mb-0">976</p>
+                          <table>
+                            <tr>
+                              <th>
+                                <p class="small text-muted mb-1">Followers</p>
+                              </th>
+                              <th>
+                                <p class="small text-muted mb-1">Following</p>
+                              </th>
+                            </tr>
+                            <tr>
+                              <td>
+                                <table>
+                                  <%followeds.forEach(function(followed){ %>
+                                    <tr>
+                                      <td><%- followed.follower_username %></td>
+                                    </tr>
+                                    <%})%>
+                                </table>
+                              </td>
+                              <td>
+                                <table>
+                                  <%followers.forEach(function(follower){ %>
+                                    <form action="/unfollow" method="POST">
+                                      <input name="follower_id" value="<%- follower.follower_username%>" type="hidden">
+                                      <tr>
+                                        <td><%- follower.followed_username %></td>
+                                        <% if (isCurrentUser){ %>
+                                          <td>
+                                            <input type="submit" value="unfollow">
+                                          </td>
+                                          <% } %>
+                                      </tr>
+                                    </form>
+                                    <%})%>
+                                </table>
+                              </td>
+                            </tr>
+                          </table>
                         </div>
                       </div>
                     </div>
@@ -36,9 +73,30 @@
           </div>
         </div>
       </section>
-    <!--<div class="container">
+      <section class="vh-100" style="background-color: #b2baec;">
+        <table>
+          <tr>
+            <th>Stock</th>
+          </tr>
+          <%tickers.forEach(function(tick){ %>
+            <form action="/removeFavorite" method="POST">
+              <input name="ticker_id" value="<%- tick.symbol%>" type="hidden">
+              <tr>
+                <td><%- tick.ticker%></td>
+                <% if (isCurrentUser){ %>
+                  <td>
+                    <input type="submit" value="Remove from Favorites">
+                  </td>
+                  <% } %>
+              </tr>
+            </form>
+            <%})%>
+        </table>
+      </section>
+    </container>
+      <!--<div class="container">
         <h1>The Profile Page</h1>
     </div> -->
-</main>
+    </main>
 
 <%- include ('../partials/footer') %>

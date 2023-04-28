@@ -331,19 +331,54 @@ app.get('/news',(req,res) =>{
 })
 
 app.get('/profile', (req, res) => {
-  const username = req.session.user;
-  db.query('SELECT * FROM users WHERE username = $1 LIMIT 1', [username])
-    .then((user) => {
-      if (!user) {
-        res.status(404).send('User not found');
-        return;
-      }
-      res.render('pages/profile', { username: username });
-    })
-    .catch((error) => {
-      console.error(error);
-      res.status(500).send('Error retrieving data');
-    });
+  var username = req.query.user;
+  var isCurrentUser =  username == req.session.user ? true : false;
+
+  if (req.query.user == null) {
+    username = req.session.user;
+    isCurrentUser = true;
+  }
+
+  const userQuery = `SELECT * FROM users WHERE username = '${username}' LIMIT 1`;
+  const tickerQuery = `SELECT * FROM users_to_ticker where username = '${username}'`;
+  const followedQuery = `SELECT follower_username FROM user_follows where followed_username = '${username}'`;
+  const followerQuery = `SELECT followed_username FROM user_follows where follower_username = '${username}'`;
+
+
+  db.task('get-everything', task => {
+    return task.batch([task.any(userQuery), task.any(tickerQuery), task.any(followedQuery), task.any(followerQuery)]);
+  })
+
+  .then(data =>{
+    console.log(data[0]);
+    console.log(data[1]);
+    console.log(data[2]);
+    if (!data[0]) {
+      res.status(404).send('User not found');
+      return;
+    }
+    res.render('pages/profile', { username: data[0][0].username, isCurrentUser: isCurrentUser, tickers: data[1], followeds: data[2], followers: data[3]});
+  })
+  .catch(error => {
+    console.error(error);
+    res.status(500).send('Error retrieving data');
+  })
+
+  // db.query('SELECT * FROM users WHERE username = $1 LIMIT 1', [username])
+  //   .then((user) => {
+  //     if (!user) {
+  //       res.status(404).send('User not found');
+  //       return;
+  //     }
+  //     console.log(user);
+  //     res.render('pages/profile', { username: username });
+  //   })
+  //   .catch((error) => {
+  //     console.error(error);
+  //     res.status(500).send('Error retrieving data');
+  //   });
+
+
 });
 
 app.get("/logout", (req, res) => {
