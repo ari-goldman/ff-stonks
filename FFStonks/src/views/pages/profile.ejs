@@ -56,14 +56,34 @@
                                                   <% } %>
                                               </tr>
                                           </form>
-                                      <%})%>
+                                  <%})%>
                                 </table>
                               </td>
                               <td>
-                                followers
+                                <table>
+                                <%followeds.forEach(function(followed){ %>            
+                                  <tr>
+                                      <td><%- followed.follower_username %></td>
+                                  </tr>
+                                <%})%>
+                                </table>
                               </td>
                               <td>
-                                following
+                                <table>
+                                  <%followers.forEach(function(follower){ %>
+                                    <form action="/unfollow" method="POST">    
+                                        <input name="follower_id" value="<%- follower.follower_username%>" type="hidden">                   
+                                        <tr>
+                                            <td><%- follower.followed_username %></td>
+                                            <% if (isCurrentUser){ %>
+                                              <td>
+                                                <input type="submit" value="unfollow">
+                                              </td>
+                                            <% } %>
+                                        </tr>
+                                    </form>
+                                  <%})%>
+                                </table>
                               </td>
                             </tr>
                           </table>

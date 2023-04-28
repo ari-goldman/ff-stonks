@@ -333,22 +333,23 @@ app.get('/profile', (req, res) => {
 
   const userQuery = `SELECT * FROM users WHERE username = '${username}' LIMIT 1`;
   const tickerQuery = `SELECT * FROM users_to_ticker where username = '${username}'`;
-  const followedQuery = 'SELECT * FROM user_follows where followed_username = $1';
-  const followerQuery = 'SELECT * FROM user_follows where follower_username = $1';
+  const followedQuery = `SELECT follower_username FROM user_follows where followed_username = '${username}'`;
+  const followerQuery = `SELECT followed_username FROM user_follows where follower_username = '${username}'`;
 
 
   db.task('get-everything', task => {
-    return task.batch([task.any(userQuery), task.any(tickerQuery)]);
+    return task.batch([task.any(userQuery), task.any(tickerQuery), task.any(followedQuery), task.any(followerQuery)]);
   })
 
   .then(data =>{
-    //console.log(data[0]);
-    //console.log(data[1][0]);
+    console.log(data[0]);
+    console.log(data[1]);
+    console.log(data[2]);
     if (!data[0]) {
       res.status(404).send('User not found');
       return;
     }
-    res.render('pages/profile', { username: data[0][0].username, isCurrentUser: isCurrentUser, tickers: data[1] });
+    res.render('pages/profile', { username: data[0][0].username, isCurrentUser: isCurrentUser, tickers: data[1], followeds: data[2], followers: data[3]});
   })
   .catch(error => {
     console.error(error);
