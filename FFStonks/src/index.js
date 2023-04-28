@@ -74,8 +74,9 @@ app.get('/welcome', (req, res) => {
   res.json({ status: 'success', message: 'Welcome!' });
 });
 
-app.get('/register', (req, res) => {
-  res.render('pages/register')
+app.get('/register', async(req, res) => {
+  ticker_data = await getTickerData();
+  res.render('pages/register',{ticker_data: ticker_data})
 });
 
 // register post route to create account and insert into the table
@@ -100,8 +101,9 @@ app.post('/register', async (req, res) => {
 });
 
 
-app.get('/login', (req, res) => {
-  res.render('pages/login')
+app.get('/login', async(req, res) => {
+  ticker_data = await getTickerData();
+  res.render('pages/login',{ticker_data: ticker_data})
 })
 
 
@@ -330,7 +332,8 @@ app.get('/news',(req,res) =>{
   res.render('pages/news')
 })
 
-app.get('/profile', (req, res) => {
+app.get('/profile', async(req, res) => {
+  ticker_data = await getTickerData();
   var username = req.query.user;
   var isCurrentUser =  username == req.session.user ? true : false;
 
@@ -357,7 +360,7 @@ app.get('/profile', (req, res) => {
       res.status(404).send('User not found');
       return;
     }
-    res.render('pages/profile', { username: data[0][0].username, isCurrentUser: isCurrentUser, tickers: data[1], followeds: data[2], followers: data[3]});
+    res.render('pages/profile', {ticker_data: ticker_data, username: data[0][0].username, isCurrentUser: isCurrentUser, tickers: data[1], followeds: data[2], followers: data[3]});
   })
   .catch(error => {
     console.error(error);
@@ -381,9 +384,10 @@ app.get('/profile', (req, res) => {
 
 });
 
-app.get("/logout", (req, res) => {
+app.get("/logout", async (req, res) => {
+  ticker_data = await getTickerData();
   req.session.destroy();
-  res.render("pages/logout");
+  res.render("pages/logout",{ticker_data: ticker_data});
 });
 
 
