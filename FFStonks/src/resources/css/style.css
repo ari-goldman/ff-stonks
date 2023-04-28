@@ -14,8 +14,18 @@
 }
 
 body {
+    
     padding: 0px;
     margin: 0px;
+}
+
+footer {
+    color: var(--light);
+    position: fixed;
+    bottom: 0vh;
+    left: 50vw;
+    transform: translateX(-50%);
+    mix-blend-mode: exclusion;
 }
 
 .navbar-container {
