@@ -39,7 +39,7 @@
                                 <table>
                                   <%followeds.forEach(function(followed){ %>
                                     <tr>
-                                      <td><%- followed.follower_username %></td>
+                                      <td> <a href="profile?user=<%- followed.follower_username%>"> <%- followed.follower_username%> </a> </td>
                                     </tr>
                                     <%})%>
                                 </table>
@@ -50,7 +50,7 @@
                                     <form action="/unfollow" method="POST">
                                       <input name="follower_id" value="<%- follower.follower_username%>" type="hidden">
                                       <tr>
-                                        <td><%- follower.followed_username %></td>
+                                        <td> <a href="profile?user=<%- follower.followed_username%>"> <%- follower.followed_username%> </a> </td>
                                         <% if (isCurrentUser){ %>
                                           <td>
                                             <input type="submit" value="unfollow">

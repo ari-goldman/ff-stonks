@@ -46,7 +46,7 @@
                     <form action="/followUser" method="POST">    
                         <input name="username" value="<%- user.username%>" type="hidden">                   
                         <tr>
-                            <td><%- user.username%></td>
+                            <td> <a href="profile?user=<%- user.username%>"> <%- user.username%> </a> </td>
                             <td>
                                 <input class="fav-follow" type="submit" value="Follow">
                             </td>
