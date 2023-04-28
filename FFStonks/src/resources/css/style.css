@@ -1,9 +1,12 @@
 :root {
     --good: #caefa6;
+    --good-dark: #a7d074;
     --bad: #f36684;
+    --bad-dark: #f3506f;
     --light: #fffef9;
     --dark: #404b4f;
     --hover: #9c4071;
+    --yellow: #ffdc86;
 
     background-color: var(--light);
     color: var(--dark);
@@ -11,8 +14,18 @@
 }
 
 body {
+    
     padding: 0px;
     margin: 0px;
+}
+
+footer {
+    color: var(--light);
+    position: fixed;
+    bottom: 0vh;
+    left: 50vw;
+    transform: translateX(-50%);
+    mix-blend-mode: exclusion;
 }
 
 .navbar-container {
@@ -142,4 +155,107 @@ body {
     text-shadow: 0px 0px 6px var(--dark), 0px 0px 3px var(--dark), 0px 0px 2px var(--dark);
     width: calc(100% - 1rem);
     margin: 0rem 0rem 1rem 0rem;
+}
+
+.search-container {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    width: 100%;
+    font-family: Merriweather;
+}
+
+.search-form {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    font-size: 3rem;
+    
+}
+
+.search-form > * {
+    width: 75vw;
+    margin: 4px 0px;
+}
+
+.search-bar {
+    padding: 3px;
+    border: none;
+    border-bottom: var(--dark) 3px solid;
+    font-size: 3rem;
+    text-align: center;
+    width: 35vw;
+    transition: width ease-out 250ms;
+}
+
+.search-bar:hover {
+    width: 40vw;
+}
+
+.search-selector {
+    width: 25vw;
+    font-size: 1.5rem;
+    border: none;
+    border-bottom: var(--dark) 3px solid;
+    text-align: center;
+    transition: width ease-out 250ms;
+}
+
+.search-selector:hover {
+    width: 30vw;
+}
+
+.search-button {
+    width: 7em;
+    font-size: 1.25rem;
+    background-color: var(--light);
+    border: none;
+    border-bottom: var(--good-dark) 3px solid;
+    border-radius: 3px;
+    transition: width ease-out 250ms;
+}
+
+.search-button:hover {
+    background-color: var(--good);
+    cursor: pointer;
+    width: 9em;
+}
+
+.search-container > table {
+    width: 25%;
+}
+
+.message {
+    border: var(--bad) 3px solid;
+    color: var(--bad-dark);
+    border-radius: 5px;
+    padding: 5px;
+    font-size: 1rem;
+}
+
+.fav-follow {
+    background-color: var(--light);
+    border: none;
+    background-color: var(--light);
+    border: var(--yellow) 2px dashed;
+    border-radius: 5px;
+}
+
+.fav-follow:hover {
+    background-color: var(--yellow);
+    cursor: pointer;
+}
+
+tr {
+    border-bottom: 1px solid;
+}
+
+td, th {
+    text-align: center;
+}
+
+table {
+    border-collapse: collapse;
 }

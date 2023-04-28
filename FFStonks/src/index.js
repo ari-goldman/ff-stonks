@@ -167,7 +167,7 @@ app.get('/news', async (req, res) => {
 })
 
 async function getTickerData() {
-  symbols = ['S&P','NDAQ','GOOGL','AAPL','SBUX','TSLA'];
+  symbols = ['NVDA','AMD','GOOGL','AAPL','SBUX','TSLA'];
   return {symbols: symbols, data: await getSymbolData(symbols)};
   
 }
@@ -207,14 +207,17 @@ async function getNews(n = 0){
   })
 }
 
-app.get('/search',(req,res) =>{
+app.get('/search', async (req,res) =>{
+  ticker_data = await getTickerData();
   res.render('pages/search',{
+    ticker_data: ticker_data,
     data: null,
     selection: null
   })
 })
 
 app.get('/searchTick', async (req,res) =>{
+  ticker_data = await getTickerData();
   var searchvalue = req.query.search;
   var searchSelect = req.query.searchSelect;
   console.log("select is " + searchSelect);
@@ -224,12 +227,14 @@ app.get('/searchTick', async (req,res) =>{
     var data = results.data.result;
     if(isEmpty(data) || searchvalue == ""){
       res.render('pages/search', {
+        ticker_data: ticker_data,
         data: null,
         selection: null,
         message: `No stocks found with ticker ${searchvalue}`
       });
     }else{
       res.render('pages/search', {
+        ticker_data: ticker_data,
         data: data,
         selection: "Stocks"
       });
@@ -241,12 +246,14 @@ app.get('/searchTick', async (req,res) =>{
     .then(data =>{
       if(isEmpty(data) || searchvalue == ""){
         res.render('pages/search', {
+          ticker_data: ticker_data,
           data: null,
           selection: null,
-          message: `No users found with username ${searchvalue}`
+          message: `No users found with username "${searchvalue}"`
         });
       }else{
         res.render('pages/search', {
+          ticker_data: ticker_data,
           data: data,
           selection: 'Users'
         });
@@ -258,6 +265,7 @@ app.get('/searchTick', async (req,res) =>{
     })
   }else if(searchSelect == 'None'){
     res.render('pages/search',{
+      ticker_data: ticker_data,
       data: null,
       message: "Please select users or stocks",
       selection: null
