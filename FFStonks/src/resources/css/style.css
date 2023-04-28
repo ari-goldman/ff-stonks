@@ -177,14 +177,24 @@ body {
     font-size: 3rem;
     text-align: center;
     width: 35vw;
+    transition: width ease-out 250ms;
+}
+
+.search-bar:hover {
+    width: 40vw;
 }
 
 .search-selector {
-    width: 80%;
+    width: 25vw;
     font-size: 1.5rem;
     border: none;
     border-bottom: var(--dark) 3px solid;
     text-align: center;
+    transition: width ease-out 250ms;
+}
+
+.search-selector:hover {
+    width: 30vw;
 }
 
 .search-button {
@@ -194,11 +204,13 @@ body {
     border: none;
     border-bottom: var(--good-dark) 3px solid;
     border-radius: 3px;
+    transition: width ease-out 250ms;
 }
 
 .search-button:hover {
     background-color: var(--good);
     cursor: pointer;
+    width: 9em;
 }
 
 .search-container > table {
@@ -223,6 +235,7 @@ body {
 
 .fav-follow:hover {
     background-color: var(--yellow);
+    cursor: pointer;
 }
 
 tr {
