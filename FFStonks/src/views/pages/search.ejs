@@ -1,36 +1,39 @@
 <%- include ('../partials/header') %>
+<%- include ('../partials/ticker') %>
 <%- include ('../partials/menu') %>
-<%- include ('../partials/message') %>
+
 
 <head>
     <link href="/css/searchStyle.css" rel="stylesheet"/>
 </head>
 <main>
-    <div class = "container">
-        <form action="/searchTick" method="GET">
-            <input type="search" id="search" name="search" placeholder="Search for...">
-            <select id="searchSelect" name="searchSelect">
-                <option value="None">-</option>
+    <div class = "search-container">
+        <%- include ('../partials/message') %>
+        <form class="search-form" action="/searchTick" method="GET">
+            <input class="search-bar" type="search" id="search" name="search" placeholder=". . .">
+            <select class="search-selector" id="searchSelect" name="searchSelect">
+                <option value="None">- - -</option>
                 <option value="Stocks">Stock Tickers</option>
                 <option value="Users">Users</option>
             </select>
-            <input type="submit" id='search' value="SEARCH">
+            <input class="search-button" type="submit" id='search' value="SEARCH">
         </form>
         <table>
             <%if(data && selection=='Stocks'){%>
+                <tr>
+                    <th>Name</th>
+                    <th>Ticker</th>
+                </tr>
                 <%data.forEach(function(tick){
                     if(tick.type == 'Common Stock'){%>
-                        <tr>
-                            <th>Name</th>
-                            <th>Ticker</th>
-                        </tr>
+                        
                         <form action="/addFavorite" method="POST">    
                             <input name="ticker_id" value="<%- tick.symbol%>" type="hidden">                   
                             <tr>
                                 <td><%- tick.description%></td>
                                 <td><%- tick.symbol%></td>
                                 <td>
-                                    <input type="submit" value="Add to Favorites">
+                                    <input class="fav-follow" type="submit" value="Add to Favorites">
                                 </td>
                             </tr>
                         </form>
@@ -46,7 +49,7 @@
                         <tr>
                             <td><%- user.username%></td>
                             <td>
-                                <input type="submit" value="Follow">
+                                <input class="fav-follow" type="submit" value="Follow">
                             </td>
                         </tr>
                     </form>
