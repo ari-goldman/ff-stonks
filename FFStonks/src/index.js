@@ -327,7 +327,7 @@ app.post('/addFavorite',async(req,res) =>{
 app.post('/followUser', async (req,res) =>{
   var followed = req.body.username;
   console.log("trying to follow user: ", following);
-  var query = `INSERT INTO user_follows (followed_id, follower_id) values('${followed}','${req.session.user}')`;
+  var query = `INSERT INTO user_follows (followed_username, follower_username) values('${followed}','${req.session.user}')`;
 
   db.any(query)
   
