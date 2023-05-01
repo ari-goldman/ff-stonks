@@ -237,6 +237,7 @@ app.get('/searchTick', async (req,res) =>{
         message: `No stocks found with ticker ${searchvalue}`
       });
     }else{
+      // console.log(data);
       res.render('pages/search', {
         ticker_data: ticker_data,
         data: data,
@@ -278,7 +279,12 @@ app.get('/searchTick', async (req,res) =>{
 });
 
 app.post('/addFavorite',async(req,res) =>{
+
+  console.log("->>>>>" + req.body.search_data)
+
   var ticker = req.body.ticker_id;
+  var search_data = JSON.parse(req.body.search_data);
+  var selection = req.body.search_selection;
   var tickQuery = `select * from tickers where ticker = '${ticker}'`;
   var userQuery = `select * from users_to_ticker where ticker = '${ticker}' AND username = '${req.session.user}'`;
   var query = `insert into tickers (ticker) values ('${ticker}');`;
@@ -286,6 +292,7 @@ app.post('/addFavorite',async(req,res) =>{
   console.log(ticker);//ticker grabbed from the button next to the result from the search
   var query_Res;
       //task to execute multiple queries
+
   db.task('get-everything', task => {
     return task.batch([task.any(tickQuery), task.any(userQuery)]);
   })
@@ -300,14 +307,15 @@ app.post('/addFavorite',async(req,res) =>{
         console.log("error:", error);
       });
     }
+    
     if (isEmpty(data[1])){
       db.any(query2)
       .then(data =>{
         console.log("Inserted into users_to_ticker");
         res.render("pages/search", {
           message: `Added ${ticker} to your favorites`,
-          data: null,
-          selection: null
+          data: search_data,
+          selection: selection
         });
       })
       .catch(error => {
@@ -316,8 +324,8 @@ app.post('/addFavorite',async(req,res) =>{
     }else{//means it was already found in users_to_ticker
       res.render("pages/search", {
         message: `${ticker} is already in your favorites`,
-        data: null,
-        selection: null
+        data: search_data,
+        selection: selection
       });
     }
   })
