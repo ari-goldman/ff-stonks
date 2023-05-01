@@ -26,6 +26,7 @@ footer {
     left: 50vw;
     transform: translateX(-50%);
     mix-blend-mode: exclusion;
+    z-index: 100;
 }
 
 .navbar-container {
@@ -258,4 +259,41 @@ td, th {
 
 table {
     border-collapse: collapse;
+}
+
+.login-register-container {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-direction: column;
+}
+
+.login-register-field {
+    font-size: 2em;
+    margin: 4px 0px 4px 0px;
+    border: none;
+    border-bottom: var(--dark) 3px solid;
+    font-size: 2em;
+    text-align: center;
+    width: 10em;
+    transition: width ease-out 250ms;
+}
+
+.login-register-field:hover {
+    width: 12em
+}
+
+.login-register-button {
+    width: auto;
+    font-size: 1.5em;
+    margin-top: 4px;
+    border-radius: 5px;
+    background-color: var(--light);
+    border: var(--good-dark) 3px solid;
+    transition: background-color ease-out 250ms;
+    cursor: pointer;
+}
+
+.login-register-button:hover {
+    background-color: var(--good);
 }
