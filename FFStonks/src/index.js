@@ -333,7 +333,24 @@ app.post('/addFavorite',async(req,res) =>{
 })
 
 app.post('/followUser', async (req,res) =>{
-  console.log("trying to follow user: ", req.body.username);
+  var followed = req.body.username;
+  console.log("trying to follow user: ", followed);
+  var query = `INSERT INTO user_follows (followed_username, follower_username) values('${followed}','${req.session.user}')`;
+
+  db.any(query)
+  
+  .then((data)=>{
+    console.log("successfully followed");
+    res.redirect(`/profile?user=${followed}`)
+  })
+  .catch((error) => {
+    console.log("unable to follow", error);
+    res.redirect("pages/search", {
+      message: `Unable to follow ${followed}`,
+      data: JSON.parse(req.body.search_data),
+      selection: req.body.selection
+    });
+  });
 })
 
 app.get('/news',(req,res) =>{
