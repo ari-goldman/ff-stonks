@@ -144,30 +144,6 @@ app.post('/login', async(req,res)=> {
   }
 });
 
-  // Authentication Middleware.
-  const auth = (req, res, next) => {
-    if (!req.session.user) {
-      // Default to login page.
-      return res.redirect('/login');
-    }
-    next();
-  };
-  
-  // Authentication Required
-  app.use(auth);
-
-
-app.get('/home', async (req, res) => {
-  ticker_data = await getTickerData();
-  res.render('pages/home', {ticker_data: ticker_data});
-});
-
-app.get('/news', async (req, res) => {
-  ticker_data = await getTickerData();
-  news = await getNews();
-  res.render('pages/news', {ticker_data: ticker_data, news: news});
-})
-
 async function getTickerData() {
   symbols = ['NVDA','AMD','GOOGL','AAPL','SBUX','TSLA'];
   return {symbols: symbols, data: await getSymbolData(symbols)};
@@ -208,6 +184,32 @@ async function getNews(n = 0){
     return error;
   })
 }
+
+
+  // Authentication Middleware.
+  const auth = (req, res, next) => {
+    if (!req.session.user) {
+      // Default to login page.
+      return res.redirect('/login');
+    }
+    next();
+  };
+  
+  // Authentication Required
+  app.use(auth);
+
+
+app.get('/home', async (req, res) => {
+  ticker_data = await getTickerData();
+  res.render('pages/home', {ticker_data: ticker_data});
+});
+
+app.get('/news', async (req, res) => {
+  ticker_data = await getTickerData();
+  news = await getNews();
+  res.render('pages/news', {ticker_data: ticker_data, news: news});
+})
+
 
 app.get('/search', async (req,res) =>{
   ticker_data = await getTickerData();
