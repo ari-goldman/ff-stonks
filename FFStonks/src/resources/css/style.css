@@ -223,9 +223,9 @@ footer {
     width: 9em;
 }
 
-.search-container > table {
-    width: 25%;
-}
+/* .search-container > table {
+    width: 50%;
+} */
 
 .message {
     border: var(--bad) 3px solid;

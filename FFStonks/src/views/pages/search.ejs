@@ -27,7 +27,9 @@
                 <%data.forEach(function(tick){
                     if(tick.type == 'Common Stock'){%>
                         <form action="/addFavorite" method="POST">    
-                            <input name="ticker_id" value="<%- tick.symbol%>" type="hidden">                   
+                            <input name="ticker_id" value="<%- tick.symbol%>" type="hidden">    
+                            <input name="search_selection" value="<%- selection%>" type="hidden">                           
+                            <input name="search_data" value='<%- JSON.stringify(data)%>' type="hidden">                
                             <tr>
                                 <td><%- tick.description%></td>
                                 <td><%- tick.symbol%></td>
@@ -44,7 +46,9 @@
                 </tr>
                 <% data.forEach(function(user){%>
                     <form action="/followUser" method="POST">    
-                        <input name="username" value="<%- user.username%>" type="hidden">                   
+                        <input name="username" value="<%- user.username%>" type="hidden"> 
+                        <input name="search_selection" value="<%- selection%>" type="hidden">                           
+                        <input name="search_data" value='<%- JSON.stringify(data)%>' type="hidden">                    
                         <tr>
                             <td> <a href="profile?user=<%- user.username%>"> <%- user.username%> </a> </td>
                             <td>
