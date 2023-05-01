@@ -3,20 +3,21 @@
 <%- include ('../partials/menu') %>
 
 <main>
-    <div class="container">
-        <h1>Login</h1>
-    <form action="/login" method="POST">
-        <label for="username">Username</label>
-        <input type="username" id="username" name="username" />
-      
-        
-        <label for="password">Password</label>
-        <input type="password" id="password" name="password" />
-         
-        <button type = "submit">Login</button>
-      </form>
-      
-    </div>
+<div class="login-register-container">
+    <h1>Login</h1>
+    <form action="/login" method="POST" style="display: flex; flex-direction: column; align-items: center;">
+        <div>
+            <!-- <label for="username" class="login-regiser-label">Username</label> -->
+            <input type="username" id="username" name="username" class="login-register-field" placeholder="Username"/>
+        </div>
+        <div>
+            <!-- <label for="password" class="login-regiser-label">Password</label> -->
+            <input type="password" id="password" name="password" class="login-register-field" placeholder="Password"/>
+        </div>
+            
+        <button type = "submit" class="login-register-button">SUBMIT</button>
+    </form>
+</div>
 </main>
 
 <%- include ('../partials/footer') %>
