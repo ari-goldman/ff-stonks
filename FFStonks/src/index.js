@@ -279,7 +279,7 @@ app.get('/searchTick', async (req,res) =>{
 });
 
 app.post('/addFavorite',async(req,res) =>{
-
+  ticker_data = await getTickerData();
   var ticker = req.body.ticker_id;
   var search_data = JSON.parse(req.body.search_data);
   var selection = req.body.search_selection;
@@ -312,7 +312,8 @@ app.post('/addFavorite',async(req,res) =>{
         res.render("pages/search", {
           message: `Added ${ticker} to your favorites`,
           data: search_data,
-          selection: selection
+          selection: selection,
+          ticker_data: ticker_data
         });
       })
       .catch(error => {
@@ -322,7 +323,8 @@ app.post('/addFavorite',async(req,res) =>{
       res.render("pages/search", {
         message: `${ticker} is already in your favorites`,
         data: search_data,
-        selection: selection
+        selection: selection,
+        ticker_data: ticker_data
       });
     }
   })
@@ -332,6 +334,7 @@ app.post('/addFavorite',async(req,res) =>{
 })
 
 app.post('/followUser', async (req,res) =>{
+  ticker_data = await getTickerData();
   var followed = req.body.username;
   console.log("trying to follow user: ", followed);
   var query = `INSERT INTO user_follows (followed_username, follower_username) values('${followed}','${req.session.user}')`;
@@ -347,7 +350,8 @@ app.post('/followUser', async (req,res) =>{
     res.redirect("pages/search", {
       message: `Unable to follow ${followed}`,
       data: JSON.parse(req.body.search_data),
-      selection: req.body.selection
+      selection: req.body.selection,
+      ticker_data: ticker_data
     });
   });
 })
