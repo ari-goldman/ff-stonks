@@ -37,7 +37,8 @@
                             <tr>
                               <td>
                                 <table>
-                                  <%followeds.forEach(function(followed){ %>
+                                  <!-- this is who follows the current user -->
+                                  <%followeds.forEach(function(followed){%>
                                     <tr>
                                       <td> <a href="profile?user=<%- followed.follower_username%>"> <%- followed.follower_username%> </a> </td>
                                     </tr>
@@ -46,9 +47,12 @@
                               </td>
                               <td>
                                 <table>
-                                  <%followers.forEach(function(follower){ %>
+                                  <!-- this is  -->
+                                  <%followers.forEach(function(follower){%>
                                     <form action="/unfollow" method="POST">
-                                      <input name="follower_id" value="<%- follower.follower_username%>" type="hidden">
+                                      <input name="follower_id" value="<%- follower.followed_username%>" type="hidden">
+                                      <input name="follower_data" value="<%- JSON.stringify(followers)%>" type="hidden">
+                                      <input name="followed_data" value="<%- JSON.stringify(followeds)%>" type="hidden">
                                       <tr>
                                         <td> <a href="profile?user=<%- follower.followed_username%>"> <%- follower.followed_username%> </a> </td>
                                         <% if (isCurrentUser){ %>
@@ -78,9 +82,9 @@
           <tr>
             <th>Stock</th>
           </tr>
-          <%tickers.forEach(function(tick){ %>
+          <%tickers.forEach(function(tick){%>
             <form action="/removeFavorite" method="POST">
-              <input name="ticker_id" value="<%- tick.symbol%>" type="hidden">
+              <input name="ticker_id" value="<%- tick.ticker%>" type="hidden">
               <tr>
                 <td><%- tick.ticker%></td>
                 <% if (isCurrentUser){ %>

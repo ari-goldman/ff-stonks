@@ -280,8 +280,6 @@ app.get('/searchTick', async (req,res) =>{
 
 app.post('/addFavorite',async(req,res) =>{
 
-  console.log("->>>>>" + req.body.search_data)
-
   var ticker = req.body.ticker_id;
   var search_data = JSON.parse(req.body.search_data);
   var selection = req.body.search_selection;
@@ -290,7 +288,6 @@ app.post('/addFavorite',async(req,res) =>{
   var query = `insert into tickers (ticker) values ('${ticker}');`;
   var query2 = `insert into users_to_ticker (username, ticker) values('${req.session.user}','${ticker}')`;
   console.log(ticker);//ticker grabbed from the button next to the result from the search
-  var query_Res;
       //task to execute multiple queries
 
   db.task('get-everything', task => {
@@ -371,8 +368,8 @@ app.get('/profile', async(req, res) => {
 
   const userQuery = `SELECT * FROM users WHERE username = '${username}' LIMIT 1`;
   const tickerQuery = `SELECT * FROM users_to_ticker where username = '${username}'`;
-  const followedQuery = `SELECT follower_username FROM user_follows where followed_username = '${username}'`;
-  const followerQuery = `SELECT followed_username FROM user_follows where follower_username = '${username}'`;
+  const followedQuery = `SELECT follower_username FROM user_follows where followed_username = '${username}'`;//gets who is following the current user
+  const followerQuery = `SELECT followed_username FROM user_follows where follower_username = '${username}'`;//gets who the current user follows
 
 
   db.task('get-everything', task => {
@@ -380,36 +377,90 @@ app.get('/profile', async(req, res) => {
   })
 
   .then(data =>{
-    console.log(data[0]);
-    console.log(data[1]);
-    console.log(data[2]);
     if (!data[0]) {
       res.status(404).send('User not found');
       return;
     }
-    res.render('pages/profile', {ticker_data: ticker_data, username: data[0][0].username, isCurrentUser: isCurrentUser, tickers: data[1], followeds: data[2], followers: data[3]});
+    res.render('pages/profile', {
+      ticker_data: ticker_data, 
+      username: data[0][0].username, 
+      isCurrentUser: isCurrentUser, 
+      tickers: data[1], 
+      followeds: data[2], //who follows current user
+      followers: data[3],//who current user is following
+    });
   })
   .catch(error => {
     console.error(error);
     res.status(500).send('Error retrieving data');
   })
-
-  // db.query('SELECT * FROM users WHERE username = $1 LIMIT 1', [username])
-  //   .then((user) => {
-  //     if (!user) {
-  //       res.status(404).send('User not found');
-  //       return;
-  //     }
-  //     console.log(user);
-  //     res.render('pages/profile', { username: username });
-  //   })
-  //   .catch((error) => {
-  //     console.error(error);
-  //     res.status(500).send('Error retrieving data');
-  //   });
-
-
 });
+
+app.post("/unfollow", async(req,res) =>{
+  ticker_data = await getTickerData();
+  var username = req.session.user;
+  var unfollow = req.body.follower_id;
+
+  
+  const deleteQuery = `DELETE FROM user_follows where follower_username = '${username}' AND followed_username = '${unfollow}'`;
+  const tickerQuery = `SELECT * FROM users_to_ticker where username = '${username}'`;
+  const followedQuery = `SELECT follower_username FROM user_follows where followed_username = '${username}'`;//gets who is following the current user
+  const followerQuery = `SELECT followed_username FROM user_follows where follower_username = '${username}'`;//gets who the current user follows
+
+
+  db.task('get-everything', task => {
+    return task.batch([task.any(deleteQuery), task.any(tickerQuery), task.any(followedQuery), task.any(followerQuery)]);
+  })
+
+
+  .then(data =>{
+    console.log("deleted " + username + " from following " + unfollow);
+    res.render('pages/profile',{
+      ticker_data: ticker_data,
+      username: username,
+      tickers: data[1],
+      isCurrentUser: true,
+      followeds: data[2],
+      followers: data[3]
+    });
+  })
+  .catch(err =>{  
+    console.log("COuld not unfollow" + err);
+  });
+})
+
+app.post("/removeFavorite", async(req,res)=>{
+  console.log("AAA" + req.body.ticker_id);
+  ticker_data = await getTickerData();
+  var username = req.session.user;
+  var ticker = req.body.ticker_id;
+
+  const deleteQuery = `DELETE FROM users_to_ticker where username = '${username}' AND ticker = '${ticker}'`;
+  const tickerQuery = `SELECT * FROM users_to_ticker where username = '${username}'`;
+  const followedQuery = `SELECT follower_username FROM user_follows where followed_username = '${username}'`;//gets who is following the current user
+  const followerQuery = `SELECT followed_username FROM user_follows where follower_username = '${username}'`;//gets who the current user follows
+
+  db.task('get-everything', task => {
+    return task.batch([task.any(deleteQuery), task.any(tickerQuery), task.any(followedQuery), task.any(followerQuery)]);
+  })
+
+
+  .then(data =>{
+    console.log("Removed ticker " + ticker);
+    res.render('pages/profile',{
+      ticker_data: ticker_data,
+      username: username,
+      tickers: data[1],
+      isCurrentUser: true,
+      followeds: data[2],
+      followers: data[3]
+    });
+  })
+  .catch(err =>{  
+    console.log("COuld not remove" + err);
+  });
+
+})
 
 app.get("/logout", async (req, res) => {
   ticker_data = await getTickerData();
