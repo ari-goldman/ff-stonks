@@ -75,10 +75,6 @@
       </section>
       <section class="vh-100" style="background-color: #b2baec;">
         <table>
-          <tr>
-            <th>Stock</th>
-          </tr>
-          <div class = 'ticker-container'>
           <% 
           Pdata = [];
           if(profile_data.data){
@@ -93,10 +89,16 @@
               for(var i = 0; i < 6; i++){
                   Pdata.push("No Data At All");
               }
-          }
-          
-          out = "";
+          } %>
+          <tr>
+            <th>Stock</th>
+          </tr>
+          <tr>
+          <% out = "";
           for(var i = 0; i < Pdata.length; i++){
+              out += `<td>`
+              out += `<form action="/removeFavorite" method="POST">
+                <input name="profile_id" value=${profile_data.symbols[i]} type="hidden">`
               out += `<div class="ticker-box">`
               out += `<div class="ticker-symbol">${profile_data.symbols[i]}</div>`
               out += `<div class="ticker-price-container">`;
@@ -106,13 +108,17 @@
               }else{
                   out += `<div style="display: flex; align-items: start; color: var(--good)">+$${Pdata[i].d}</div>`
               }
+              out += `<input type="submit" value="Remove from Favorites">`
               out += `</div>`
-              out += "</div>"
+              out += `</div>`
+              out += `</form>`
+              out += `</td>`
           }
           %>
           <%- out %>
+        </tr>
 
-        </div>
+
         </table>
       </section>
     </container>
