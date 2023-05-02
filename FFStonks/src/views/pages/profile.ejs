@@ -78,25 +78,44 @@
           <tr>
             <th>Stock</th>
           </tr>
-          <%tickers.forEach(function(tick){ %>
-            <form action="/removeFavorite" method="POST">
-              <input name="ticker_id" value="<%- tick.symbol%>" type="hidden">
-              <tr>
-                <td><%- tick.ticker%></td>
-                <% if (isCurrentUser){ %>
-                  <td>
-                    <input type="submit" value="Remove from Favorites">
-                  </td>
-                  <% } %>
-              </tr>
-            </form>
-            <%})%>
+          <div class = 'ticker-container'>
+          <% 
+          Pdata = [];
+          if(profile_data.data){
+              for(var i = 0; i < profile_data.symbols.length; i++){
+                  if(i < profile_data.data.length){
+                      Pdata.push(profile_data.data[i].data);
+                  }else{
+                      Pdata.push("No Data");
+                  }
+              }
+          }else{
+              for(var i = 0; i < 6; i++){
+                  Pdata.push("No Data At All");
+              }
+          }
+          
+          out = "";
+          for(var i = 0; i < Pdata.length; i++){
+              out += `<div class="ticker-box">`
+              out += `<div class="ticker-symbol">${profile_data.symbols[i]}</div>`
+              out += `<div class="ticker-price-container">`;
+              out += `<div style="display: flex; align-items: end;">$${Pdata[i].c}</div>`
+              if(Pdata[i].d < 0){
+                  out += `<div style="display: flex; align-items: start; color: var(--bad)">-$${Math.abs(Pdata[i].d)}</div>`
+              }else{
+                  out += `<div style="display: flex; align-items: start; color: var(--good)">+$${Pdata[i].d}</div>`
+              }
+              out += `</div>`
+              out += "</div>"
+          }
+          %>
+          <%- out %>
+
+        </div>
         </table>
       </section>
     </container>
-      <!--<div class="container">
-        <h1>The Profile Page</h1>
-    </div> -->
-    </main>
+  </main>
 
 <%- include ('../partials/footer') %>

@@ -347,6 +347,8 @@ async function getProfileData(queryResult) {
   function strip(item){
     symbols.push(item.ticker)
   }
+  //symbols.push('GOOGL');
+  //console.log("symbols found for a user:" + symbols);
   return {symbols: symbols, data: await getSymbolData(symbols)};
 }
 
@@ -360,15 +362,23 @@ app.get('/profile', async(req, res) => {
     isCurrentUser = true;
   }
 
-  const userQuery = `SELECT * FROM users WHERE username = '${username}' LIMIT 1`;
+  
   const tickerQuery = `SELECT ticker FROM users_to_ticker where username = '${username}'`;
+
+  //tickers = await getProfileData(['GOOGL']);
+  //console.log('test-result:' + tickers);
+
+  const userQuery = `SELECT username FROM users WHERE username = '${username}' LIMIT 1`;
   const followedQuery = `SELECT follower_username FROM user_follows where followed_username = '${username}'`;
   const followerQuery = `SELECT followed_username FROM user_follows where follower_username = '${username}'`;
 
   db.task('get-everything', task => {
     return task.batch([task.any(userQuery), task.any(tickerQuery), task.any(followedQuery), task.any(followerQuery)]);
   })
-  .then(data => {
+  .then(async data => {
+    var profile_data = await getProfileData(data[1]);
+    console.log(profile_data);
+
     console.log(data[0]);
     console.log(data[1]);
     console.log(data[2]);
@@ -377,10 +387,7 @@ app.get('/profile', async(req, res) => {
       res.status(404).send('User not found');
       return;
     }
-
-    //tickers = await getProfileData(data[1]);
-    //console.log(tickers);
-    res.render('pages/profile', {ticker_data: ticker_data, username: data[0][0].username, isCurrentUser: isCurrentUser, tickers: data[1], followeds: data[2], followers: data[3]});
+    res.render('pages/profile', {ticker_data: ticker_data, username: data[0][0].username, isCurrentUser: isCurrentUser, profile_data: profile_data, followeds: data[2], followers: data[3]});
   })
   .catch(error => {
     console.error(error);
