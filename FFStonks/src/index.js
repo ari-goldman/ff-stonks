@@ -150,6 +150,7 @@ async function getTickerData() {
   
 }
 
+
 // given a list of valid market symbols as strings, 
 // returns the data from each symbol in a list
 async function getSymbolData(symbols) {
@@ -359,19 +360,6 @@ app.get('/news',(req,res) =>{
   res.render('pages/news')
 })
 
-async function getProfileData(queryResult) {
-  symbols = [];
-
-  queryResult.forEach(strip)
-
-  function strip(item){
-    symbols.push(item.ticker)
-  }
-  //symbols.push('GOOGL');
-  //console.log("symbols found for a user:" + symbols);
-  return {symbols: symbols, data: await getSymbolData(symbols)};
-}
-
 app.get('/profile', async(req, res) => {
   ticker_data = await getTickerData();
   var username = req.query.user;
@@ -387,13 +375,12 @@ app.get('/profile', async(req, res) => {
   const followedQuery = `SELECT follower_username FROM user_follows where followed_username = '${username}'`;//gets who is following the current user
   const followerQuery = `SELECT followed_username FROM user_follows where follower_username = '${username}'`;//gets who the current user follows
 
+
   db.task('get-everything', task => {
     return task.batch([task.any(userQuery), task.any(tickerQuery), task.any(followedQuery), task.any(followerQuery)]);
   })
-  .then(async data => {
-    var profile_data = await getProfileData(data[1]);
-    console.log(profile_data);
-    
+
+  .then(data =>{
     if (!data[0]) {
       res.status(404).send('User not found');
       return;
@@ -402,11 +389,10 @@ app.get('/profile', async(req, res) => {
       ticker_data: ticker_data, 
       username: data[0][0].username, 
       isCurrentUser: isCurrentUser, 
-      profile_data: profile_data, 
+      tickers: data[1], 
       followeds: data[2], //who follows current user
       followers: data[3],//who current user is following
     });
-    
   })
   .catch(error => {
     console.error(error);
@@ -418,6 +404,7 @@ app.post("/unfollow", async(req,res) =>{
   ticker_data = await getTickerData();
   var username = req.session.user;
   var unfollow = req.body.follower_id;
+
   
   const deleteQuery = `DELETE FROM user_follows where follower_username = '${username}' AND followed_username = '${unfollow}'`;
   const tickerQuery = `SELECT * FROM users_to_ticker where username = '${username}'`;
@@ -478,7 +465,6 @@ app.post("/removeFavorite", async(req,res)=>{
   });
 
 })
-
 
 app.get("/logout", async (req, res) => {
   ticker_data = await getTickerData();

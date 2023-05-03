@@ -79,53 +79,28 @@
       </section>
       <section class="vh-100" style="background-color: #b2baec;">
         <table>
-          <% 
-          Pdata = [];
-          if(profile_data.data){
-              for(var i = 0; i < profile_data.symbols.length; i++){
-                  if(i < profile_data.data.length){
-                      Pdata.push(profile_data.data[i].data);
-                  }else{
-                      Pdata.push("No Data");
-                  }
-              }
-          }else{
-              for(var i = 0; i < 6; i++){
-                  Pdata.push("No Data At All");
-              }
-          } %>
           <tr>
             <th>Stock</th>
           </tr>
-          
-          <tr>
-          <% out = "";
-          for(var i = 0; i < Pdata.length; i++){
-              out += `<td>`
-              out += `<form action="/removeFavorite" method="POST">
-                <input name="profile_id" value=${profile_data.symbols[i]} type="hidden">`
-              out += `<div class="ticker-box">`
-              out += `<div class="ticker-symbol">${profile_data.symbols[i]}</div>`
-              out += `<div class="ticker-price-container">`;
-              out += `<div style="display: flex; align-items: end;">$${Pdata[i].c}</div>`
-              if(Pdata[i].d < 0){
-                  out += `<div style="display: flex; align-items: start; color: var(--bad)">-$${Math.abs(Pdata[i].d)}</div>`
-              }else{
-                  out += `<div style="display: flex; align-items: start; color: var(--good)">+$${Pdata[i].d}</div>`
-              }
-              out += `<input type="submit" value="Remove from Favorites">`
-              out += `</div>`
-              out += `</div>`
-              out += `</form>`
-              out += `</td>`
-          }
-          %>
-          <%- out %>
-        </tr>
-
+          <%tickers.forEach(function(tick){%>
+            <form action="/removeFavorite" method="POST">
+              <input name="ticker_id" value="<%- tick.ticker%>" type="hidden">
+              <tr>
+                <td><%- tick.ticker%></td>
+                <% if (isCurrentUser){ %>
+                  <td>
+                    <input type="submit" value="Remove from Favorites">
+                  </td>
+                  <% } %>
+              </tr>
+            </form>
+            <%})%>
         </table>
       </section>
     </container>
-  </main>
+      <!--<div class="container">
+        <h1>The Profile Page</h1>
+    </div> -->
+    </main>
 
 <%- include ('../partials/footer') %>
