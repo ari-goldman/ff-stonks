@@ -46,3 +46,13 @@ Cole - Work with daniel to complete profile page API and EJS. Update user storie
 Daniel - work on API and EJS for profile page
 Josh - not attended
 Diego - not attended
+
+### Week 4
+
+Just talked about the presentation, and certain things we should include such as:
+- tools we used (1-10)
+- architecture diagram 
+- challenges
+- future enchancements (if we had more time, what could we have done differently or added)
+
+Also attempted to give a quick demo (yet ran into errors)
