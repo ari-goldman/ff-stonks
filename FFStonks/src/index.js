@@ -360,6 +360,19 @@ app.get('/news',(req,res) =>{
   res.render('pages/news')
 })
 
+async function getProfileData(queryResult) {
+  symbols = [];
+
+  queryResult.forEach(strip)
+
+  function strip(item){
+    symbols.push(item.ticker)
+  }
+  //symbols.push('GOOGL');
+  //console.log("symbols found for a user:" + symbols);
+  return {symbols: symbols, data: await getSymbolData(symbols)};
+}
+
 app.get('/profile', async(req, res) => {
   ticker_data = await getTickerData();
   var username = req.query.user;
@@ -380,7 +393,10 @@ app.get('/profile', async(req, res) => {
     return task.batch([task.any(userQuery), task.any(tickerQuery), task.any(followedQuery), task.any(followerQuery)]);
   })
 
-  .then(data =>{
+  .then(async data =>{
+    var profile_data = await getProfileData(data[1]);
+    console.log(profile_data);
+
     if (!data[0]) {
       res.status(404).send('User not found');
       return;
@@ -389,7 +405,7 @@ app.get('/profile', async(req, res) => {
       ticker_data: ticker_data, 
       username: data[0][0].username, 
       isCurrentUser: isCurrentUser, 
-      tickers: data[1], 
+      profile_data: profile_data, 
       followeds: data[2], //who follows current user
       followers: data[3],//who current user is following
     });
@@ -401,32 +417,17 @@ app.get('/profile', async(req, res) => {
 });
 
 app.post("/unfollow", async(req,res) =>{
-  ticker_data = await getTickerData();
   var username = req.session.user;
   var unfollow = req.body.follower_id;
-
   
   const deleteQuery = `DELETE FROM user_follows where follower_username = '${username}' AND followed_username = '${unfollow}'`;
-  const tickerQuery = `SELECT * FROM users_to_ticker where username = '${username}'`;
-  const followedQuery = `SELECT follower_username FROM user_follows where followed_username = '${username}'`;//gets who is following the current user
-  const followerQuery = `SELECT followed_username FROM user_follows where follower_username = '${username}'`;//gets who the current user follows
-
 
   db.task('get-everything', task => {
-    return task.batch([task.any(deleteQuery), task.any(tickerQuery), task.any(followedQuery), task.any(followerQuery)]);
+    return task.batch([task.any(deleteQuery)]);
   })
-
-
   .then(data =>{
     console.log("deleted " + username + " from following " + unfollow);
-    res.render('pages/profile',{
-      ticker_data: ticker_data,
-      username: username,
-      tickers: data[1],
-      isCurrentUser: true,
-      followeds: data[2],
-      followers: data[3]
-    });
+    res.redirect('/profile');
   })
   .catch(err =>{  
     console.log("COuld not unfollow" + err);
@@ -434,31 +435,22 @@ app.post("/unfollow", async(req,res) =>{
 })
 
 app.post("/removeFavorite", async(req,res)=>{
-  console.log("AAA" + req.body.ticker_id);
-  ticker_data = await getTickerData();
+  console.log("AAA" + req.body.profile_id);
+
   var username = req.session.user;
-  var ticker = req.body.ticker_id;
+  var ticker = req.body.profile_id;
 
   const deleteQuery = `DELETE FROM users_to_ticker where username = '${username}' AND ticker = '${ticker}'`;
-  const tickerQuery = `SELECT * FROM users_to_ticker where username = '${username}'`;
-  const followedQuery = `SELECT follower_username FROM user_follows where followed_username = '${username}'`;//gets who is following the current user
-  const followerQuery = `SELECT followed_username FROM user_follows where follower_username = '${username}'`;//gets who the current user follows
+
 
   db.task('get-everything', task => {
-    return task.batch([task.any(deleteQuery), task.any(tickerQuery), task.any(followedQuery), task.any(followerQuery)]);
+    return task.batch([task.any(deleteQuery)]);
   })
 
 
   .then(data =>{
     console.log("Removed ticker " + ticker);
-    res.render('pages/profile',{
-      ticker_data: ticker_data,
-      username: username,
-      tickers: data[1],
-      isCurrentUser: true,
-      followeds: data[2],
-      followers: data[3]
-    });
+    res.redirect('/profile');
   })
   .catch(err =>{  
     console.log("COuld not remove" + err);
