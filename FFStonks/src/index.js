@@ -11,6 +11,8 @@ const bcrypt = require('bcrypt'); //  To hash passwords
 const axios = require('axios'); // To make HTTP requests from our server. We'll learn more about it in Part B.
 axios.defaults.baseURL = 'https://finnhub.io/api/v1'; // since we'll be using the same API, just set the default here
 
+ticker_data = null;
+
 
 // *****************************************************
 // <!-- Section 2 : Connect to DB -->
@@ -205,14 +207,12 @@ app.get('/home', async (req, res) => {
 });
 
 app.get('/news', async (req, res) => {
-  ticker_data = await getTickerData();
   news = await getNews();
   res.render('pages/news', {ticker_data: ticker_data, news: news});
 })
 
 
 app.get('/search', async (req,res) =>{
-  ticker_data = await getTickerData();
   res.render('pages/search',{
     ticker_data: ticker_data,
     data: null,
@@ -221,7 +221,6 @@ app.get('/search', async (req,res) =>{
 })
 
 app.get('/searchTick', async (req,res) =>{
-  ticker_data = await getTickerData();
   var searchvalue = req.query.search;
   var searchSelect = req.query.searchSelect;
   console.log("select is " + searchSelect);
@@ -279,7 +278,6 @@ app.get('/searchTick', async (req,res) =>{
 });
 
 app.post('/addFavorite',async(req,res) =>{
-  ticker_data = await getTickerData();
   var ticker = req.body.ticker_id;
   var search_data = JSON.parse(req.body.search_data);
   var selection = req.body.search_selection;
@@ -334,7 +332,6 @@ app.post('/addFavorite',async(req,res) =>{
 })
 
 app.post('/followUser', async (req,res) =>{
-  ticker_data = await getTickerData();
   var followed = req.body.username;
   console.log("trying to follow user: ", followed);
   var query = `INSERT INTO user_follows (followed_username, follower_username) values('${followed}','${req.session.user}')`;
@@ -374,7 +371,6 @@ async function getProfileData(queryResult) {
 }
 
 app.get('/profile', async(req, res) => {
-  ticker_data = await getTickerData();
   var username = req.query.user;
   var isCurrentUser =  username == req.session.user ? true : false;
 
@@ -459,7 +455,6 @@ app.post("/removeFavorite", async(req,res)=>{
 })
 
 app.get("/logout", async (req, res) => {
-  ticker_data = await getTickerData();
   req.session.destroy();
   res.render("pages/logout",{ticker_data: ticker_data});
 });
