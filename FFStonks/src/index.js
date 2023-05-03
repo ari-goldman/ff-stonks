@@ -105,7 +105,10 @@ app.post('/register', async (req, res) => {
 
 app.get('/login', async(req, res) => {
   ticker_data = await getTickerData();
-  res.render('pages/login',{ticker_data: ticker_data})
+  res.render('pages/login',{
+    ticker_data: ticker_data,
+    login: false
+  })
 })
 
 
@@ -127,7 +130,8 @@ app.post('/login', async(req,res)=> {
     if(request[0] == null){
       req_not_null = false;
       res.render('pages/register',{
-        message: "Username not found, register below to continue"
+        message: "Username not found, register below to continue",
+        login: false
       });
       match = false;
     }else{
@@ -140,7 +144,8 @@ app.post('/login', async(req,res)=> {
       res.redirect('/home');
     }else if(req_not_null){
       res.render('pages/login',{
-        message: "Incorrect username or password"
+        message: "Incorrect username or password",
+        login: false
       });
     }
   }
@@ -203,12 +208,19 @@ async function getNews(n = 0){
 
 app.get('/home', async (req, res) => {
   ticker_data = await getTickerData();
-  res.render('pages/home', {ticker_data: ticker_data});
+  res.render('pages/home', {
+    ticker_data: ticker_data,
+    login: true
+  });
 });
 
 app.get('/news', async (req, res) => {
   news = await getNews();
-  res.render('pages/news', {ticker_data: ticker_data, news: news});
+  res.render('pages/news', {
+    ticker_data: ticker_data, 
+    news: news,
+    login: true
+  });
 })
 
 
@@ -216,7 +228,8 @@ app.get('/search', async (req,res) =>{
   res.render('pages/search',{
     ticker_data: ticker_data,
     data: null,
-    selection: null
+    selection: null,
+    login: true
   })
 })
 
@@ -233,14 +246,16 @@ app.get('/searchTick', async (req,res) =>{
         ticker_data: ticker_data,
         data: null,
         selection: null,
-        message: `No stocks found with ticker ${searchvalue}`
+        message: `No stocks found with ticker ${searchvalue}`,
+        login: true
       });
     }else{
       // console.log(data);
       res.render('pages/search', {
         ticker_data: ticker_data,
         data: data,
-        selection: "Stocks"
+        selection: "Stocks",
+        login: true
       });
     }
   }else if(searchSelect == "Users"){
@@ -253,13 +268,15 @@ app.get('/searchTick', async (req,res) =>{
           ticker_data: ticker_data,
           data: null,
           selection: null,
-          message: `No users found with username "${searchvalue}"`
+          message: `No users found with username "${searchvalue}"`,
+          login: true
         });
       }else{
         res.render('pages/search', {
           ticker_data: ticker_data,
           data: data,
-          selection: 'Users'
+          selection: 'Users',
+          login: true
         });
       }
       
@@ -272,7 +289,8 @@ app.get('/searchTick', async (req,res) =>{
       ticker_data: ticker_data,
       data: null,
       message: "Please select users or stocks",
-      selection: null
+      selection: null,
+      login: true
     })
   }
 });
@@ -311,7 +329,8 @@ app.post('/addFavorite',async(req,res) =>{
           message: `Added ${ticker} to your favorites`,
           data: search_data,
           selection: selection,
-          ticker_data: ticker_data
+          ticker_data: ticker_data,
+          login: true
         });
       })
       .catch(error => {
@@ -322,7 +341,8 @@ app.post('/addFavorite',async(req,res) =>{
         message: `${ticker} is already in your favorites`,
         data: search_data,
         selection: selection,
-        ticker_data: ticker_data
+        ticker_data: ticker_data,
+        login: true
       });
     }
   })
@@ -348,7 +368,8 @@ app.post('/followUser', async (req,res) =>{
       message: `Unable to follow ${followed}`,
       data: JSON.parse(req.body.search_data),
       selection: req.body.selection,
-      ticker_data: ticker_data
+      ticker_data: ticker_data,
+      login: true
     });
   });
 })
@@ -403,7 +424,8 @@ app.get('/profile', async(req, res) => {
       isCurrentUser: isCurrentUser, 
       profile_data: profile_data, 
       followeds: data[2], //who follows current user
-      followers: data[3],//who current user is following
+      followers: data[3],//who current user is following,
+      login: true
     });
   })
   .catch(error => {
@@ -456,7 +478,10 @@ app.post("/removeFavorite", async(req,res)=>{
 
 app.get("/logout", async (req, res) => {
   req.session.destroy();
-  res.render("pages/logout",{ticker_data: ticker_data});
+  res.render("pages/logout",{
+    ticker_data: ticker_data,
+    login: false
+  });
 });
 
 
