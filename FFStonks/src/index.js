@@ -78,7 +78,10 @@ app.get('/welcome', (req, res) => {
 
 app.get('/register', async(req, res) => {
   ticker_data = await getTickerData();
-  res.render('pages/register',{ticker_data: ticker_data})
+  res.render('pages/register',{
+    ticker_data: ticker_data,
+    login: false
+  })
 });
 
 // register post route to create account and insert into the table
@@ -375,7 +378,10 @@ app.post('/followUser', async (req,res) =>{
 })
 
 app.get('/news',(req,res) =>{
-  res.render('pages/news')
+  res.render('pages/news', {
+    ticker_data: ticker_data,
+    login: true
+  })
 })
 
 async function getProfileData(queryResult) {
