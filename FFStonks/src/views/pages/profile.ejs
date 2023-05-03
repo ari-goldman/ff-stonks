@@ -113,7 +113,9 @@
               }else{
                   out += `<div style="display: flex; align-items: start; color: var(--good)">+$${Pdata[i].d}</div>`
               }
-              out += `<input type="submit" value="Remove from Favorites">`
+              if(isCurrentUser){
+                out += `<input type="submit" value="Remove from Favorites">`
+              }
               out += `</div>`
               out += `</div>`
               out += `</form>`

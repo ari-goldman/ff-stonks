@@ -412,7 +412,6 @@ app.get('/profile', async(req, res) => {
 
   .then(async data =>{
     var profile_data = await getProfileData(data[1]);
-    console.log(profile_data);
 
     if (!data[0]) {
       res.status(404).send('User not found');
@@ -453,7 +452,6 @@ app.post("/unfollow", async(req,res) =>{
 })
 
 app.post("/removeFavorite", async(req,res)=>{
-  console.log("AAA" + req.body.profile_id);
 
   var username = req.session.user;
   var ticker = req.body.profile_id;
