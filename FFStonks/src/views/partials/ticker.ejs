@@ -8,7 +8,7 @@
             if(i < ticker_data.data.length){
                 data.push(ticker_data.data[i].data);
             }else{
-                data.push("No Data");
+                data.push("No Data At All");
             }
         }
     }else{
@@ -18,6 +18,8 @@
     }
     
     out = "";
+    if(data[0] != "No Data At All"){
+    
     for(var i = 0; i < data.length; i++){
         out += `<div class="ticker-box">`
         out += `<div class="ticker-symbol">${ticker_data.symbols[i]}</div>`
@@ -31,6 +33,7 @@
         out += `</div>`
         out += "</div>"
     }
+}
          %>
     <%- out %>
 </div>
